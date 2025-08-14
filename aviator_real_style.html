@@ -1,0 +1,385 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Aviator — Painel de Sinais</title>
+<style>
+  :root{
+    --bg-dark:#060607;
+    --bg-mid:#12060a;
+    --card:#0f0b0bcc;
+    --accent:#ff3b30;
+    --accent-2:#ff8b72;
+    --glass: rgba(255,255,255,0.03);
+    --muted:#bfbfbf;
+    --shadow: 0 10px 30px rgba(0,0,0,0.6);
+    --font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:var(--font);background:radial-gradient(1200px 600px at 10% 10%, rgba(255,70,50,0.02), transparent), linear-gradient(180deg,var(--bg-dark),var(--bg-mid));color:#fff}
+  .stage{max-width:1200px;margin:18px auto;padding:18px;display:grid;grid-template-columns:1.6fr 1fr;gap:18px;align-items:start}
+  @media (max-width:980px){ .stage{grid-template-columns:1fr} }
+
+  header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  header h1{margin:0;color:var(--accent);font-size:20px}
+  header .sub{color:var(--muted);font-size:13px}
+
+  .panel{background: linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.03);box-shadow:var(--shadow)}
+  .main{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+  .left{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(0,0,0,0.06), rgba(255,255,255,0.01))}
+  .mult { font-size:92px; font-weight:900; color:var(--accent); text-shadow:0 20px 50px rgba(255,59,48,0.08); }
+  .mult-sub { color:var(--muted); margin-top:6px; font-size:14px; }
+
+  .graph { width: 460px; max-width:48%; min-width:260px; height:180px; border-radius:12px; padding:10px; background:linear-gradient(180deg, rgba(255,255,255,0.008), rgba(255,255,255,0.006)); display:flex; align-items:center; justify-content:center; }
+  @media (max-width:980px){ .graph{max-width:100%} .left{width:100%} }
+
+  .controls { display:flex; gap:12px; align-items:center; margin-top:14px; flex-wrap:wrap; justify-content:center; }
+  .bet-fixed { padding:10px 18px; border-radius:10px; background:rgba(0,0,0,0.22); border:1px solid rgba(255,255,255,0.04); font-weight:900; }
+  button.btn { padding:12px 18px; border-radius:12px; border:none; cursor:pointer; font-weight:800; }
+  .btn-primary { background: linear-gradient(90deg,var(--accent),var(--accent-2)); color:#1b0a09; box-shadow: 0 10px 30px rgba(255,59,48,0.08); }
+  .btn-ghost { background: transparent; border:1px solid rgba(255,255,255,0.04); color:var(--muted); }
+  .btn-disabled { opacity:0.45; pointer-events:none; }
+
+  .status { display:flex; gap:12px; align-items:center; justify-content:center; margin-top:12px; color:var(--muted); font-size:13px }
+  .pill { background: rgba(255,255,255,0.02); padding:6px 10px; border-radius:999px; border:1px solid rgba(255,255,255,0.02); }
+
+  /* plane animation */
+  .planeWrap { position:relative; height:44px; overflow:hidden; margin-top:12px; }
+  .plane { position:absolute; left:-30%; top:50%; transform:translateY(-50%); width:220px; opacity:0; transition: all 1.6s linear; filter:drop-shadow(0 8px 20px rgba(0,0,0,0.6)); }
+  .plane.show { left:120%; opacity:1; }
+
+  /* right column chat */
+  .right-col { display:flex; flex-direction:column; gap:12px; }
+  .chatPanel { display:flex; flex-direction:column; gap:8px; min-height:420px; }
+  .chatWindow { flex:1; overflow:auto; padding:12px; border-radius:10px; background: linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006)); border:1px solid rgba(255,255,255,0.03); }
+  .message { padding:10px; border-radius:10px; margin-bottom:10px; background: rgba(0,0,0,0.12); border:1px solid rgba(255,255,255,0.02); }
+  .who { font-weight:800; color:var(--accent-2); margin-bottom:6px; }
+  .msg-win { border-left: 4px solid #7ef59c; }
+  .msg-lose { border-left: 4px solid #ff8b8b; }
+
+  .chatForm { display:flex; gap:8px; }
+  .chatInput { flex:1; padding:12px; border-radius:10px; border:1px solid rgba(255,255,255,0.04); background: rgba(0,0,0,0.16); color:inherit; }
+
+  .signals { margin-top:6px; border-radius:10px; padding:8px; background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006)); border:1px solid rgba(255,255,255,0.02); max-height:220px; overflow:auto; }
+  .signalRow { display:flex; justify-content:space-between; padding:8px; border-bottom:1px dashed rgba(255,255,255,0.02); font-weight:800; color:var(--muted); }
+
+  .flashWrap { position:fixed; inset:0; display:flex; align-items:center; justify-content:center; pointer-events:none; }
+  .flashCircle { width:300px; height:300px; border-radius:50%; background: radial-gradient(circle, rgba(255,255,255,0.03), rgba(255,255,255,0)); transform:scale(0); opacity:0; }
+  .flashShow { animation: flashIn .5s forwards; }
+  @keyframes flashIn { to { transform:scale(1); opacity:1; } }
+
+  /* responsive tweaks */
+  @media (max-width:600px){
+    .mult { font-size:56px; }
+    .graph { height:120px; }
+  }
+</style>
+</head>
+<body>
+  <header>
+    <h1>🎯 Aviator — Painel de Sinais</h1>
+    <div class="sub">Aposta fixa: <strong>30 MZN</strong> · Sinais apenas por clique</div>
+  </header>
+
+  <div class="stage">
+    <!-- LEFT -->
+    <section class="panel">
+      <div class="main">
+        <div class="left">
+          <div id="mult" class="mult">—</div>
+          <div class="mult-sub">Multiplicador</div>
+
+          <div class="planeWrap" aria-hidden="true">
+            <svg id="plane" class="plane" viewBox="0 0 64 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+              <path d="M2 12 L58 12" stroke="#7b8ea3" stroke-width="1" stroke-linecap="round" opacity="0.35"/>
+              <g transform="translate(0,0)" fill="#9fb3c8">
+                <path d="M8 5 L20 12 L8 19 L8 14 L2 12 L8 10 Z" opacity="0.95"/>
+                <rect x="20" y="11" width="30" height="2" rx="1" fill="#9fb3c8" opacity="0.9"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="controls" style="margin-top:12px">
+            <div class="bet-fixed">STANDART: <strong>30 MZN</strong></div>
+          </div>
+
+          <div class="controls">
+            <button id="btnBet" class="btn btn-primary">Colocar Aposta</button>
+            <button id="btnSignal" class="btn btn-ghost">Gerar Sinal</button>
+            <button id="btnCash" class="btn btn-ghost btn-disabled" disabled>Cashout</button>
+          </div>
+
+          <div class="status" style="margin-top:12px">
+            <div class="pill" id="phase">Fase: aguardando</div>
+            <div class="pill" id="timer">Último sinal: --</div>
+            <div class="pill" id="online">👥 -- online</div>
+          </div>
+        </div>
+
+        <div class="graph">
+          <canvas id="canvas" width="420" height="180"></canvas>
+        </div>
+      </div>
+
+      <div style="margin-top:12px;color:var(--muted);font-size:13px;text-align:center">Pressione <strong>Gerar Sinal</strong> para receber o coeficiente sugerido. Interface fixa.</div>
+    </section>
+
+    <!-- RIGHT -->
+    <aside class="right-col">
+      <div class="panel chatPanel">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Chat</strong>
+          <div style="color:var(--muted);font-size:13px">Ao vivo</div>
+        </div>
+
+        <div id="chatWindow" class="chatWindow" role="log" aria-live="polite"></div>
+
+        <div class="chatForm">
+          <input id="chatInput" class="chatInput" placeholder="Enviar mensagem (anônima) — ex.: 'Cashout 3.2x!'" />
+          <button id="sendBtn" class="btn btn-primary">Enviar</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <strong>Sinais recentes</strong>
+          <div style="color:var(--muted);font-size:13px">Últimos</div>
+        </div>
+        <div id="signals" class="signals"></div>
+      </div>
+    </aside>
+  </div>
+
+  <div class="flashWrap"><div id="flashCircle" class="flashCircle"></div></div>
+
+<script>
+/* ---------- Comportamento ---------- 
+   - Interface fixa, aposta = 30 MZN (não editável)
+   - Sinais aparecem somente ao clicar em "Gerar Sinal"
+   - Chat em Português (anônimo): o usuário envia, também aparecem mensagens automáticas
+   - Som de avião + whoosh via WebAudio (sинтез без файлов)
+   - Gráfico visual apenas para aparência (pequая симуляция)
+*/
+
+/* Constantes & estado */
+const MIN_BET = 30;
+let state = {
+  betPlaced: false,
+  betAmount: MIN_BET,
+  lastCoef: null,
+  players: 0
+};
+
+/* Elementos */
+const multEl = document.getElementById('mult');
+const phaseEl = document.getElementById('phase');
+const timerEl = document.getElementById('timer');
+const onlineEl = document.getElementById('online');
+const btnBet = document.getElementById('btnBet');
+const btnSignal = document.getElementById('btnSignal');
+const btnCash = document.getElementById('btnCash');
+const chatWindow = document.getElementById('chatWindow');
+const chatInput = document.getElementById('chatInput');
+const sendBtn = document.getElementById('sendBtn');
+const signalsEl = document.getElementById('signals');
+const plane = document.getElementById('plane');
+const flashCircle = document.getElementById('flashCircle');
+
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+
+/* WebAudio */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+const audioCtx = AudioCtx ? new AudioCtx() : null;
+
+function playAviatorWhoosh(){
+  if(!audioCtx) return;
+  const now = audioCtx.currentTime;
+  // short whoosh noise
+  const len = audioCtx.sampleRate * 0.45;
+  const buffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+  const d = buffer.getChannelData(0);
+  for(let i=0;i<len;i++) d[i] = (Math.random()*2-1) * (1 - i/len);
+  const src = audioCtx.createBufferSource(); src.buffer = buffer;
+  const filter = audioCtx.createBiquadFilter(); filter.type='lowpass'; filter.frequency.setValueAtTime(1400, now);
+  src.connect(filter); filter.connect(audioCtx.destination);
+  src.start(now); src.stop(now + 0.45);
+
+  // engine whoosh / rumble
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(70, now);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.linearRampToValueAtTime(0.07, now + 0.05);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(now); osc.stop(now + 0.95);
+}
+
+/* Plane animation */
+function flyPlane(){
+  plane.classList.remove('show'); void plane.offsetWidth; plane.classList.add('show');
+  setTimeout(()=> plane.classList.remove('show'), 1600);
+}
+
+/* Fake online counter */
+function updateOnline(){
+  state.players = Math.floor(Math.random()*200 + 30);
+  onlineEl.textContent = '👥 ' + state.players + ' online';
+}
+setInterval(updateOnline, 2500); updateOnline();
+
+/* Chat: mensagens automáticas */
+const autoMsgs = [
+  "Peguei 3.2x — ótima rodada!",
+  "Cashout 2.5x, lucro 💸",
+  "Perdi no 1.08x 😅",
+  "Sinal bom, segui e ganhei!",
+  "30 -> 120 MZN, show!",
+  "Alguém mais pegou 4x?"
+];
+
+function pushChat(user, text, cls=''){
+  const el = document.createElement('div');
+  el.className = 'message ' + (cls||'');
+  el.innerHTML = `<div class="who">${user}</div><div class="txt">${text}</div>`;
+  chatWindow.appendChild(el);
+  chatWindow.scrollTop = chatWindow.scrollHeight;
+}
+
+function spawnAutoMsg(){
+  const id = 'User' + Math.floor(Math.random()*9000 + 1000);
+  const t = autoMsgs[Math.floor(Math.random()*autoMsgs.length)];
+  const cls = /peguei|cashout|ganhei|lucro/i.test(t) ? 'msg-win' : '';
+  pushChat(id, t, cls);
+}
+setInterval(spawnAutoMsg, 2800);
+spawnAutoMsg();
+
+/* Send chat */
+sendBtn.addEventListener('click', ()=>{
+  const v = chatInput.value.trim();
+  if(!v) return;
+  pushChat('Você', v, /peguei|cashout|ganhei|lucro/i.test(v) ? 'msg-win' : '');
+  chatInput.value = '';
+});
+chatInput.addEventListener('keydown', e => { if(e.key === 'Enter') sendBtn.click(); });
+
+/* Signals list helper */
+function addSignal(coef){
+  const el = document.createElement('div');
+  el.className = 'signalRow';
+  el.innerHTML = `<div>${new Date().toLocaleTimeString()}</div><div style="color:var(--accent)">${coef}x</div>`;
+  signalsEl.prepend(el);
+  while(signalsEl.children.length > 12) signalsEl.removeChild(signalsEl.lastChild);
+}
+
+/* "Gerar Sinal" - somente por clique */
+btnSignal.addEventListener('click', ()=>{
+  // gerar sinal enviesado para valores baixos (mais realista)
+  let val = Math.pow(Math.random(), 1.4) * 6 + 1.05;
+  val = Math.max(1.05, Math.min(val, 18));
+  const coef = val.toFixed(2);
+  // mostrar multiplicador temporariamente
+  multEl.textContent = coef + 'x';
+  multEl.style.transform = 'scale(1.15)';
+  setTimeout(()=> multEl.style.transform = '', 240);
+  addSignal(coef);
+  pushChat('SinalBot', `Sinal sugerido: ${coef}x`);
+  // som + aviao
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  playAviatorWhoosh();
+  flyPlane();
+  // atualizar timer last signal
+  timerEl.textContent = 'Último sinal: ' + new Date().toLocaleTimeString();
+  state.lastCoef = parseFloat(coef);
+  // enable cashout if bet placed
+  if(state.betPlaced && !state.cashed){
+    btnCash.classList.remove('btn-disabled'); btnCash.disabled = false;
+  }
+});
+
+/* Place bet (fixa) */
+btnBet.addEventListener('click', ()=>{
+  if(state.betPlaced){
+    alert('Você já tem uma aposta pendente (30 MZN).');
+    return;
+  }
+  state.betPlaced = true; state.betAmount = MIN_BET; state.cashed = false;
+  pushChat('Você', `Coloquei ${MIN_BET} MZN na próxima rodada`);
+});
+
+/* Cashout: baseado no último coef exibido */
+btnCash.addEventListener('click', ()=>{
+  if(!state.betPlaced || !state.lastCoef || state.cashed){
+    alert('Sem aposta ativa ou sem coeficiente disponível.');
+    return;
+  }
+  const payout = (state.betAmount * state.lastCoef).toFixed(2);
+  state.cashed = true;
+  pushChat('Você', `Cashout em ${state.lastCoef.toFixed(2)}x → Recebeu ${payout} MZN`, 'msg-win');
+  // flash visual
+  flash('#7ef59c');
+  // desativa botão cash
+  btnCash.classList.add('btn-disabled'); btnCash.disabled = true;
+});
+
+/* Flash visual */
+function flash(color='#7ef59c'){
+  flashCircle.style.background = `radial-gradient(circle, ${color}, rgba(0,0,0,0))`;
+  flashCircle.classList.add('flashShow');
+  setTimeout(()=> flashCircle.classList.remove('flashShow'), 600);
+}
+
+/* Simple decorative graph (não altera lógica) */
+let graph = [{x:0,y:1}];
+function graphPush(v){ graph.push({x:graph.length,y:v}); if(graph.length>300) graph.shift(); }
+function drawGraph(){
+  const W = canvas.width = canvas.clientWidth * (window.devicePixelRatio||1);
+  const H = canvas.height = canvas.clientHeight * (window.devicePixelRatio||1);
+  ctx.clearRect(0,0,W,H);
+  const view = graph.slice(-120);
+  const maxY = Math.max(...view.map(p=>p.y), 3);
+  ctx.beginPath();
+  for(let i=0;i<view.length;i++){
+    const p = view[i];
+    const sx = (i/(view.length-1||1))*W;
+    const sy = H - ((p.y / maxY) * (H - 12)) - 6;
+    if(i===0) ctx.moveTo(sx,sy); else ctx.lineTo(sx,sy);
+  }
+  ctx.strokeStyle = 'rgba(255,100,80,0.95)';
+  ctx.lineWidth = 2 * (window.devicePixelRatio||1);
+  ctx.stroke();
+  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
+  const g = ctx.createLinearGradient(0,0,0,H);
+  g.addColorStop(0, 'rgba(255,59,48,0.08)');
+  g.addColorStop(1, 'rgba(255,59,48,0.01)');
+  ctx.fillStyle = g; ctx.fill();
+}
+
+setInterval(()=>{
+  // keep graph "alive" with small noise
+  const last = graph.length?graph[graph.length-1].y:1;
+  const next = Math.max(1, last + (Math.random()-0.5)*0.06);
+  graphPush(next);
+  drawGraph();
+}, 850);
+
+/* seed signals */
+(function seed(){
+  for(let i=0;i<6;i++){
+    const c = (Math.random()*5 + 1).toFixed(2);
+    addSignal(c);
+  }
+})();
+
+/* Accessibility: resume audio on first gesture */
+document.addEventListener('click', function resume(){
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  document.removeEventListener('click', resume);
+});
+</script>
+</body>
+</html>
