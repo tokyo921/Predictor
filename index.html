@@ -1,334 +1,330 @@
-#!/usr/bin/env python3
-# -*- coding: utf-8 -*-
-
-"""
-🎯 Bot de Sinais para Aviator (fictício) — arquivo único
-========================================================
-⚠️ Aviso importante:
-Este programa é apenas para fins educacionais/entretenimento. O jogo Aviator
-tem resultados aleatórios; não existem previsões garantidas. Jogue com
-responsabilidade e nunca arrisque dinheiro que você não pode perder.
-
-Como usar (GitHub-ready):
-1) Salve este arquivo como `aviator_sinais_bot.py`
-2) Execute no terminal:
-   python aviator_sinais_bot.py
-3) Use o menu interativo (manual/automático/configurações/exportar CSV).
-
-Requisitos:
-- Python 3.8+ (nenhuma biblioteca externa)
-
-Funcionalidades:
-- Geração de sinais fictícios com base, risco e intervalo configuráveis
-- Modo manual (um sinal) e automático (sinais contínuos)
-- Contagem regressiva visual quando houver atraso de entrada
-- Exportação opcional dos sinais para CSV (histórico)
-- Idioma: Português (pt-BR)
-"""
-
-import csv
-import json
-import os
-import random
-import sys
-import time
-from datetime import datetime
-from typing import Dict, Any, List
-
-# ============================== Configurações & Persistência ==============================
-
-APP_NAME = "AviatorSinaisBot"
-CONFIG_ARQ = "config_sinais.json"
-HIST_ARQ = "historico_sinais.csv"
-
-DEFAULTS: Dict[str, Any] = {
-    "base": 2.0,         # valor base da aposta
-    "risco": "medio",    # baixo | medio | alto
-    "intervalo": 10,     # segundos entre sinais automáticos
-    "csv_auto": True,    # salvar automaticamente os sinais no CSV
-    "contagem": True     # mostrar contagem regressiva de entrada
-}
-
-RISK_MAP = {
-    "baixo": 0.5,
-    "medio": 1.0,
-    "alto": 1.7
-}
-
-def carregar_config() -> Dict[str, Any]:
-    if os.path.exists(CONFIG_ARQ):
-        try:
-            with open(CONFIG_ARQ, "r", encoding="utf-8") as f:
-                cfg = json.load(f)
-            # garantir chaves padrão
-            for k, v in DEFAULTS.items():
-                cfg.setdefault(k, v)
-            return cfg
-        except Exception:
-            pass
-    return DEFAULTS.copy()
-
-def salvar_config(cfg: Dict[str, Any]) -> None:
-    try:
-        with open(CONFIG_ARQ, "w", encoding="utf-8") as f:
-            json.dump(cfg, f, ensure_ascii=False, indent=2)
-    except Exception as e:
-        print(f"[!] Falha ao salvar config: {e}")
-
-CONFIG = carregar_config()
-
-# ============================== Núcleo de Geração de Sinais ==============================
-
-def gerar_sinal(cfg: Dict[str, Any]) -> Dict[str, Any]:
-    base = float(cfg.get("base", DEFAULTS["base"]))
-    risco = str(cfg.get("risco", DEFAULTS["risco"])).lower()
-    fator = RISK_MAP.get(risco, 1.0)
-
-    # stake sugerida limitada entre 0.5x e 3x da base, ajustada pelo risco
-    stake = round(max(base * 0.5, min(base * (0.9 + fator), base * 3.0)), 2)
-
-    estrategias = [
-        "Flat (sem progressão)",
-        "Gestão 1-2 (aumentar levemente após perda)",
-        "Stop rápido (1 gale no máximo)"
-    ]
-    estrategia = random.choice(estrategias)
-
-    # atraso de entrada (simulação de janela/timing)
-    atraso_seg = random.choice([0, 5, 10, 15, 20, 30])
-
-    # alvos/limites meramente ilustrativos (não preditivos)
-    stop_win = round(stake * (1.2 + random.random() * 0.8), 2)
-    stop_loss = round(stake * (1.0 + random.random() * 1.0), 2)
-
-    # confiança cosmética (não tem base real)
-    confianca = random.choice(["baixa", "média", "alta"])
-
-    return {
-        "hora": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-        "stake": stake,
-        "estrategia": estrategia,
-        "atraso": atraso_seg,
-        "stop_win": stop_win,
-        "stop_loss": stop_loss,
-        "confianca": confianca,
-        "risco": risco,
-        "base": base,
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Aviator – Gerador de Sinais (Fictício)</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: #121a35;
+      --accent: #6ee7ff;
+      --accent-2: #a78bfa;
+      --text: #e8f3ff;
+      --muted: #9fb3c8;
+      --danger: #ff6b6b;
+      --ok: #6bff95;
     }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0; background: linear-gradient(180deg, #0b1020, #0b1020 40%, #0e1430 100%);
+      color: var(--text); font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
+      min-height: 100dvh; display: grid; place-items: center; padding: 24px;
+    }
+    .app { width: min(1100px, 100%); }
+    .header { display:flex; gap:14px; align-items:center; justify-content:space-between; margin-bottom:16px; }
+    h1 { margin:0; font-size: clamp(20px, 2.4vw, 28px); letter-spacing: .3px; }
+    .badge { background: linear-gradient(90deg, var(--accent), var(--accent-2)); color:#051524; font-weight:700; padding:6px 10px; border-radius:999px; }
 
-def exibir_sinal(sinal: Dict[str, Any], cfg: Dict[str, Any]) -> None:
-    quando = "agora" if sinal["atraso"] == 0 else f"em {sinal['atraso']}s"
-    moldura = "═" * 42
-    print(f"\n{moldura}\n🎯 Sinal Aviator — {sinal['hora']}\n{moldura}")
-    print(f"Entrada: {quando}")
-    print(f"Stake sugerida: {sinal['stake']}")
-    print(f"Estratégia: {sinal['estrategia']}")
-    print(f"Stop-win: {sinal['stop_win']} | Stop-loss: {sinal['stop_loss']}")
-    print(f"Confiança: {sinal['confianca']} | Risco: {sinal['risco']} | Base: {sinal['base']}")
-    print("⚠️ Este sinal é FICTÍCIO e NÃO garante resultados.")
+    .grid { display:grid; grid-template-columns: 1.2fr .8fr; gap:16px; }
+    @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
 
-    # Contagem regressiva estética para a entrada
-    if cfg.get("contagem", True) and sinal["atraso"] > 0:
-        contagem_regressiva(sinal["atraso"])
+    .card { background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+            border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:16px; backdrop-filter: blur(6px); }
 
-def contagem_regressiva(segundos: int) -> None:
-    print("\n⏳ Preparando entrada:", end=" ")
-    for s in range(segundos, 0, -1):
-        print(f"{s}", end="", flush=True)
-        time.sleep(1)
-        print("\b" * len(str(s)), end="", flush=True)  # apaga o número anterior
-    print("✅")
+    .controls { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
+    button, .btn {
+      appearance:none; border:1px solid rgba(255,255,255,.12); background:#121a35; color:var(--text);
+      padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; transition: .15s transform, .15s background, .15s border;
+    }
+    button:hover { transform: translateY(-1px); border-color: rgba(255,255,255,.25); }
+    button.primary { background: linear-gradient(90deg, #2dd4bf, #60a5fa); color:#07121f; border:none; }
+    button.danger { background: #25121a; border-color: #ff7b7b44; color:#ffd6d6; }
+    button.ghost { background: transparent; }
 
-def salvar_csv(sinal: Dict[str, Any], arquivo: str = HIST_ARQ) -> None:
-    novo_arquivo = not os.path.exists(arquivo)
-    campos = [
-        "hora", "entrada_em_seg", "stake", "estrategia",
-        "stop_win", "stop_loss", "confianca", "risco", "base"
-    ]
-    try:
-        with open(arquivo, "a", newline="", encoding="utf-8") as f:
-            writer = csv.DictWriter(f, fieldnames=campos)
-            if novo_arquivo:
-                writer.writeheader()
-            writer.writerow({
-                "hora": sinal["hora"],
-                "entrada_em_seg": sinal["atraso"],
-                "stake": sinal["stake"],
-                "estrategia": sinal["estrategia"],
-                "stop_win": sinal["stop_win"],
-                "stop_loss": sinal["stop_loss"],
-                "confianca": sinal["confianca"],
-                "risco": sinal["risco"],
-                "base": sinal["base"],
-            })
-    except Exception as e:
-        print(f"[!] Falha ao escrever CSV: {e}")
+    .row { display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; }
+    .row3 { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
+    @media (max-width: 520px){ .row, .row3{ grid-template-columns: 1fr; } }
 
-# ============================== Interface de Linha de Comando ==============================
+    label { font-size:13px; color: var(--muted); }
+    input, select { width:100%; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:#0f1730; color:var(--text); }
 
-def limpar_tela():
-    try:
-        os.system("cls" if os.name == "nt" else "clear")
-    except Exception:
-        pass
+    .signal { border-left:4px solid var(--accent); padding-left:12px; }
+    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
 
-def cabeçalho():
-    print("=== BOT DE SINAIS AVIATOR (FICTÍCIO) ===")
-    print("Aviso: Não há previsão real. Use por sua conta e risco.")
-    print("-----------------------------------------")
+    table { width:100%; border-collapse: collapse; }
+    th, td { padding:10px 8px; border-bottom:1px dashed rgba(255,255,255,.08); text-align:left; font-size:14px; }
+    th { color: var(--muted); font-weight:600; }
 
-def menu() -> None:
-    while True:
-        limpar_tela()
-        cabeçalho()
-        print("1) Gerar um sinal agora")
-        print("2) Começar sinais automáticos")
-        print("3) Alterar configurações")
-        print("4) Exportar um sinal para CSV")
-        print("5) Ver configurações atuais")
-        print("0) Sair")
-        opcao = input("\nEscolha uma opção: ").strip()
+    .muted { color: var(--muted); }
+    .pill { padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.14); font-size:12px; }
+    .pill.success { color:#05250f; background: #86efac; border-color: #05250f22; }
+    .pill.warn { color:#2b160a; background: #fcd34d; border-color: #2b160a22; }
+    .pill.danger { color:#2b0a0a; background: #fda4af; border-color: #2b0a0a22; }
 
-        if opcao == "1":
-            sinal = gerar_sinal(CONFIG)
-            exibir_sinal(sinal, CONFIG)
-            if CONFIG.get("csv_auto", True):
-                salvar_csv(sinal)
-                print("💾 (Salvo automaticamente no histórico CSV)")
-            esperar_enter()
+    .footer { margin-top: 10px; font-size: 13px; color: var(--muted); }
+  </style>
+</head>
+<body>
+  <div class="app">
+    <div class="header">
+      <h1>🎯 Aviator — Gerador de Sinais <span class="badge mono">FICTÍCIO</span></h1>
+      <div class="muted">Uso educacional/entretenimento · Sem garantias</div>
+    </div>
 
-        elif opcao == "2":
-            try:
-                print(f"\nIniciando sinais automáticos a cada {CONFIG['intervalo']}s... (Ctrl+C para parar)")
-                while True:
-                    sinal = gerar_sinal(CONFIG)
-                    exibir_sinal(sinal, CONFIG)
-                    if CONFIG.get("csv_auto", True):
-                        salvar_csv(sinal)
-                        print("💾 (Salvo automaticamente no histórico CSV)")
-                    time.sleep(int(CONFIG["intervalo"]))
-            except KeyboardInterrupt:
-                print("\n⏹ Sinais automáticos interrompidos.")
-                esperar_enter()
+    <div class="grid">
+      <!-- Painel esquerdo: Último sinal + Log -->
+      <section class="card">
+        <div class="controls" style="margin-bottom:12px">
+          <button id="btnOne" class="primary">Gerar sinal</button>
+          <button id="btnAuto">Iniciar automático</button>
+          <button id="btnStop" class="danger">Parar</button>
+          <button id="btnExport" class="ghost">Exportar CSV</button>
+          <button id="btnClear" class="ghost">Limpar log</button>
+        </div>
 
-        elif opcao == "3":
-            alterar_configuracoes()
+        <div id="last" class="signal">
+          <div class="muted">Nenhum sinal ainda.</div>
+        </div>
 
-        elif opcao == "4":
-            sinal = gerar_sinal(CONFIG)
-            exibir_sinal(sinal, CONFIG)
-            salvar_csv(sinal)
-            print("✅ Sinal exportado para CSV.")
-            esperar_enter()
+        <div style="margin-top:12px; overflow:auto; max-height: 42vh;">
+          <table id="logTable">
+            <thead>
+              <tr>
+                <th>Hora</th>
+                <th>Entrada</th>
+                <th>Stake</th>
+                <th>Estratégia</th>
+                <th>Stops</th>
+                <th>Confiança</th>
+                <th>Risco</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </section>
 
-        elif opcao == "5":
-            mostrar_config()
-            esperar_enter()
+      <!-- Painel direito: Configurações -->
+      <aside class="card">
+        <h3 style="margin-top:0">⚙️ Configurações</h3>
+        <div class="row3">
+          <div>
+            <label>Base</label>
+            <input id="base" type="number" min="0.1" step="0.1" value="2.0">
+          </div>
+          <div>
+            <label>Risco</label>
+            <select id="risco">
+              <option value="baixo">baixo</option>
+              <option value="medio" selected>medio</option>
+              <option value="alto">alto</option>
+            </select>
+          </div>
+          <div>
+            <label>Intervalo (sinais automáticos)</label>
+            <input id="intervalo" type="number" min="1" max="600" step="1" value="10">
+          </div>
+        </div>
+        <div style="height:10px"></div>
+        <div class="row">
+          <label style="display:flex; gap:8px; align-items:center">
+            <input id="csvAuto" type="checkbox" checked>
+            Salvar automaticamente no CSV
+          </label>
+          <label style="display:flex; gap:8px; align-items:center">
+            <input id="contagem" type="checkbox" checked>
+            Mostrar contagem regressiva
+          </label>
+        </div>
+        <div style="height:10px"></div>
+        <button id="btnSave">Salvar configurações</button>
+        <div class="footer">As configurações são guardadas no <span class="mono">localStorage</span>.</div>
 
-        elif opcao == "0":
-            print("👋 Saindo...")
-            break
+        <div style="margin-top:16px" class="muted">
+          ⚠️ Este gerador é <b>fictício</b> e não prevê resultados reais. Jogue com responsabilidade.
+        </div>
+      </aside>
+    </div>
+  </div>
 
-        else:
-            print("❌ Opção inválida.")
-            time.sleep(1.2)
+<script>
+(function(){
+  const RISK_MAP = { baixo: 0.5, medio: 1.0, alto: 1.7 };
+  const DEFAULTS = { base: 2.0, risco: 'medio', intervalo: 10, csv_auto: true, contagem: true };
 
-def mostrar_config():
-    print("\n--- Configurações Atuais ---")
-    for k, v in CONFIG.items():
-        print(f"{k}: {v}")
+  // ----- Estado & Persistência -----
+  const state = loadState();
+  let timer = null;
+  const log = [];
 
-def alterar_configuracoes():
-    print("\n--- Alterar Configurações ---")
-    # base
-    try:
-        base_nova = input(f"Base atual {CONFIG['base']} → novo valor (ENTER p/ manter): ").strip()
-        if base_nova:
-            CONFIG["base"] = float(base_nova.replace(",", "."))
-    except ValueError:
-        print("Valor inválido para base. Mantendo anterior.")
+  function loadState(){
+    try{
+      const raw = localStorage.getItem('aviator_sinais_cfg');
+      if(!raw) return { ...DEFAULTS };
+      const cfg = JSON.parse(raw);
+      return { ...DEFAULTS, ...cfg };
+    }catch(e){ return { ...DEFAULTS }; }
+  }
+  function saveState(){
+    localStorage.setItem('aviator_sinais_cfg', JSON.stringify(state));
+  }
 
-    # risco
-    risco_novo = input(f"Risco atual {CONFIG['risco']} (baixo/medio/alto) → novo (ENTER p/ manter): ").strip().lower()
-    if risco_novo in RISK_MAP:
-        CONFIG["risco"] = risco_novo
-    elif risco_novo:
-        print("Risco inválido. Mantendo anterior.")
+  // ----- Util -----
+  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
+  function rnd(min, max){ return Math.random()*(max-min)+min; }
+  function now(){
+    const d = new Date();
+    const pad = n => String(n).padStart(2,'0');
+    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
+  }
 
-    # intervalo
-    try:
-        inter_novo = input(f"Intervalo atual {CONFIG['intervalo']}s → novo (ENTER p/ manter): ").strip()
-        if inter_novo:
-            val = int(inter_novo)
-            if 1 <= val <= 600:
-                CONFIG["intervalo"] = val
-            else:
-                print("Intervalo deve estar entre 1 e 600 segundos.")
-    except ValueError:
-        print("Valor inválido para intervalo. Mantendo anterior.")
+  function gerarSinal(){
+    const base = Number(state.base) || DEFAULTS.base;
+    const risco = String(state.risco || 'medio');
+    const fator = RISK_MAP[risco] ?? 1.0;
+    const stake = Math.round(Math.max(base*0.5, Math.min(base*(0.9+fator), base*3.0)) * 100)/100;
+    const estrategias = [
+      'Flat (sem progressão)',
+      'Gestão 1-2 (aumentar levemente após perda)',
+      'Stop rápido (1 gale no máximo)'
+    ];
+    const estrategia = estrategias[Math.floor(Math.random()*estrategias.length)];
+    const atraso = [0,5,10,15,20,30][Math.floor(Math.random()*6)];
+    const stop_win = Math.round(stake * (1.2 + Math.random()*0.8) * 100)/100;
+    const stop_loss = Math.round(stake * (1.0 + Math.random()*1.0) * 100)/100;
+    const confs = ['baixa','média','alta'];
+    const confianca = confs[Math.floor(Math.random()*confs.length)];
+    return { hora: now(), stake, estrategia, atraso, stop_win, stop_loss, confianca, risco, base };
+  }
 
-    # csv_auto
-    csv_auto_novo = input(f"Salvar CSV automático (atual {CONFIG['csv_auto']}) [s/n] (ENTER p/ manter): ").strip().lower()
-    if csv_auto_novo in ("s", "sim"):
-        CONFIG["csv_auto"] = True
-    elif csv_auto_novo in ("n", "nao", "não"):
-        CONFIG["csv_auto"] = False
+  function contagemRegressiva(seg, el){
+    return new Promise(resolve => {
+      if(!state.contagem || seg<=0){ resolve(); return; }
+      const span = document.createElement('span');
+      span.className = 'pill warn';
+      span.style.marginLeft = '8px';
+      el.appendChild(span);
+      let n = seg;
+      span.textContent = `${n}s`;
+      const id = setInterval(()=>{
+        n--; span.textContent = `${n}s`;
+        if(n<=0){ clearInterval(id); span.textContent='pronto'; span.className='pill success'; setTimeout(()=>span.remove(), 1200); resolve(); }
+      }, 1000);
+    });
+  }
 
-    # contagem regressiva
-    contagem_nova = input(f"Mostrar contagem regressiva (atual {CONFIG['contagem']}) [s/n] (ENTER p/ manter): ").strip().lower()
-    if contagem_nova in ("s", "sim"):
-        CONFIG["contagem"] = True
-    elif contagem_nova in ("n", "nao", "não"):
-        CONFIG["contagem"] = False
+  function renderLast(s){
+    const last = document.getElementById('last');
+    const quando = s.atraso===0 ? 'agora' : `em ${s.atraso}s`;
+    last.innerHTML = `
+      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
+        <div class="pill">${s.hora}</div>
+        <div class="pill">Risco: <b class="mono">${s.risco}</b></div>
+        <div class="pill">Base: <b class="mono">${s.base}</b></div>
+        <div class="pill">Confiança: <b>${s.confianca}</b></div>
+      </div>
+      <h3 style="margin:10px 0 8px 0">Entrada: <span class="mono">${quando}</span></h3>
+      <div class="row">
+        <div>
+          <div class="muted">Stake sugerida</div>
+          <div class="mono" style="font-size:22px">${s.stake}</div>
+        </div>
+        <div>
+          <div class="muted">Estratégia</div>
+          <div class="mono" style="font-size:16px">${s.estrategia}</div>
+        </div>
+      </div>
+      <div class="row" style="margin-top:6px">
+        <div>
+          <div class="muted">Stop‑win</div>
+          <div class="mono">${s.stop_win}</div>
+        </div>
+        <div>
+          <div class="muted">Stop‑loss</div>
+          <div class="mono">${s.stop_loss}</div>
+        </div>
+      </div>
+      <div class="muted" style="margin-top:10px">⚠️ Sinal gerado automaticamente e <b>não</b> garante resultados.</div>
+    `;
 
-    salvar_config(CONFIG)
-    print("✅ Configurações atualizadas e salvas.")
+    // contagem visual ao lado do título "Entrada"
+    const h3 = last.querySelector('h3');
+    contagemRegressiva(s.atraso, h3);
+  }
 
-def esperar_enter():
-    try:
-        input("\nPressione ENTER para continuar...")
-    except (EOFError, KeyboardInterrupt):
-        pass
+  function appendLog(s){
+    log.push(s);
+    const tb = document.querySelector('#logTable tbody');
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td class="mono">${s.hora}</td>
+      <td>${s.atraso===0?'agora':`em ${s.atraso}s`}</td>
+      <td class="mono">${s.stake}</td>
+      <td>${s.estrategia}</td>
+      <td class="mono">${s.stop_win} / ${s.stop_loss}</td>
+      <td>${s.confianca}</td>
+      <td>${s.risco}</td>
+    `;
+    tb.prepend(tr);
+  }
 
-# ============================== Execução ==============================
+  function exportCSV(){
+    if(!log.length){ alert('Sem dados no log. Gere um sinal primeiro.'); return; }
+    const head = ['hora','entrada_em_seg','stake','estrategia','stop_win','stop_loss','confianca','risco','base'];
+    const rows = log.map(s=>[s.hora, s.atraso, s.stake, s.estrategia, s.stop_win, s.stop_loss, s.confianca, s.risco, s.base]);
+    const csv = [head.join(','), ...rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','))].join('\n');
+    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url; a.download = `historico_sinais_${Date.now()}.csv`;
+    document.body.appendChild(a); a.click(); a.remove();
+    URL.revokeObjectURL(url);
+  }
 
-def main():
-    # Execução direta por argumentos (opcional, útil para automação/GitHub Actions)
-    # Exemplos:
-    #   python aviator_sinais_bot.py --once
-    #   python aviator_sinais_bot.py --auto 5
-    #   python aviator_sinais_bot.py --export
-    args = sys.argv[1:]
-    if args:
-        if args[0] == "--once":
-            sinal = gerar_sinal(CONFIG)
-            exibir_sinal(sinal, CONFIG)
-            if CONFIG.get("csv_auto", True):
-                salvar_csv(sinal)
-            return
-        if args[0] == "--auto":
-            intervalo = int(args[1]) if len(args) > 1 else int(CONFIG["intervalo"])
-            try:
-                print(f"Iniciando modo automático a cada {intervalo}s... (Ctrl+C para sair)")
-                while True:
-                    sinal = gerar_sinal(CONFIG)
-                    exibir_sinal(sinal, CONFIG)
-                    if CONFIG.get("csv_auto", True):
-                        salvar_csv(sinal)
-                    time.sleep(intervalo)
-            except KeyboardInterrupt:
-                print("\nEncerrado pelo usuário.")
-            return
-        if args[0] == "--export":
-            sinal = gerar_sinal(CONFIG)
-            exibir_sinal(sinal, CONFIG)
-            salvar_csv(sinal)
-            print("Exportado para CSV.")
-            return
+  function startAuto(){
+    stopAuto();
+    const interval = clamp(parseInt(state.intervalo)||10, 1, 600) * 1000;
+    timer = setInterval(()=>{
+      const s = gerarSinal();
+      renderLast(s); appendLog(s);
+      if(state.csv_auto) addToCsvBuffer(s);
+    }, interval);
+  }
+  function stopAuto(){ if(timer){ clearInterval(timer); timer = null; } }
 
-    # Modo interativo (menu)
-    menu()
+  // CSV buffer para modo automático (download manual via botão Exportar)
+  function addToCsvBuffer(s){
+    log.length; // já guardamos tudo no log para exportar
+  }
 
-if __name__ == "__main__":
-    main()
+  // ----- Bind UI -----
+  const $ = sel => document.querySelector(sel);
+  $('#base').value = state.base;
+  $('#risco').value = state.risco;
+  $('#intervalo').value = state.intervalo;
+  $('#csvAuto').checked = !!state.csv_auto;
+  $('#contagem').checked = !!state.contagem;
+
+  $('#btnSave').addEventListener('click', ()=>{
+    state.base = parseFloat($('#base').value) || DEFAULTS.base;
+    state.risco = $('#risco').value;
+    state.intervalo = clamp(parseInt($('#intervalo').value)||10, 1, 600);
+    state.csv_auto = $('#csvAuto').checked;
+    state.contagem = $('#contagem').checked;
+    saveState();
+    alert('Configurações salvas.');
+  });
+
+  $('#btnOne').addEventListener('click', ()=>{ const s = gerarSinal(); renderLast(s); appendLog(s); });
+  $('#btnAuto').addEventListener('click', ()=>{ startAuto(); alert('Modo automático iniciado.'); });
+  $('#btnStop').addEventListener('click', ()=>{ stopAuto(); });
+  $('#btnExport').addEventListener('click', exportCSV);
+  $('#btnClear').addEventListener('click', ()=>{ document.querySelector('#logTable tbody').innerHTML=''; log.length=0; });
+
+})();
+</script>
+</body>
+</html>
+
 
