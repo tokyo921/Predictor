@@ -1,349 +1,166 @@
-<!doctype html>
-<html lang="pt-MZ">
+<!DOCTYPE html>
+<html lang="pt">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Aviator — Painel (Escuro, Som fixo)</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aviator - Bot de Sinais</title>
 <style>
-  :root{
-    --bg:#050608;
-    --panel:#0b0d10;
-    --muted:#9aa6b2;
-    --accent:#2aa79b; /* нейтрально-приглушённый акцент (не красный) */
-    --glass: rgba(255,255,255,0.02);
-    --font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
-  }
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:var(--font);background:linear-gradient(180deg,var(--bg),#071015);color:#e6eef1}
-  .wrap{max-width:1100px;margin:20px auto;padding:18px;display:grid;grid-template-columns:2fr 1fr;gap:18px}
-  @media (max-width:920px){ .wrap{grid-template-columns:1fr} }
-
-  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
-  header h1{margin:0;font-size:20px;color:var(--accent)}
-  header .sub{color:var(--muted);font-size:13px}
-
-  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.02)}
-  .top{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
-  .left{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005))}
-  .mult{font-size:82px;font-weight:900;color:var(--accent);text-shadow:0 8px 30px rgba(42,167,155,0.06)}
-  .mult-sub{color:var(--muted);margin-top:6px;font-size:13px}
-  .graph{width:420px;max-width:48%;min-width:260px;height:160px;border-radius:10px;padding:8px;background:linear-gradient(180deg, rgba(255,255,255,0.006), rgba(255,255,255,0.003));display:flex;align-items:center;justify-content:center}
-
-  .controls{display:flex;gap:10px;align-items:center;margin-top:12px;flex-wrap:wrap;justify-content:center}
-  .bet-fixed{padding:10px 16px;border-radius:10px;background:rgba(0,0,0,0.14);border:1px solid rgba(255,255,255,0.02);font-weight:800;color:#e6eef1}
-  .btn{padding:12px 20px;border-radius:10px;border:none;cursor:pointer;font-weight:800}
-  .btn-primary{background:linear-gradient(90deg,var(--accent), #2fc0a8); color:#0b1616; box-shadow:0 8px 30px rgba(42,167,155,0.06)}
-  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted)}
-  .btn-disabled{opacity:0.45;pointer-events:none}
-
-  .status{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:12px;color:var(--muted);font-size:13px}
-  .pill{background:rgba(255,255,255,0.01);padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.02)}
-
-  .chat-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-  .chat-box{height:460px;overflow:auto;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.007), rgba(255,255,255,0.003));border:1px solid rgba(255,255,255,0.02)}
-  .msg{margin-bottom:10px;padding:8px;border-radius:8px;background:rgba(0,0,0,0.12);border:1px solid rgba(255,255,255,0.02)}
-  .who{font-weight:700;color:var(--accent);font-size:13px;margin-bottom:4px}
-  .msg.win{border-left:4px solid rgba(125, 255, 200, 0.9)}
-  .msg.lose{border-left:4px solid rgba(255,120,120,0.9)}
-  .chat-form{display:flex;gap:8px;margin-top:8px}
-  .chat-input{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(0,0,0,0.14);color:inherit}
-
-  .signals{margin-top:10px;border-radius:8px;padding:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.004));border:1px solid rgba(255,255,255,0.02);max-height:220px;overflow:auto}
-  .signalRow{display:flex;justify-content:space-between;padding:8px;border-bottom:1px dashed rgba(255,255,255,0.02);font-weight:800;color:var(--muted)}
-
-  .flashWrap{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-  .flashCircle{width:260px;height:260px;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0.02), rgba(255,255,255,0));transform:scale(0);opacity:0}
-  .flashShow{animation:flashIn .45s forwards}
-  @keyframes flashIn{to{transform:scale(1);opacity:1}}
-
-  @media (max-width:600px){
-    .mult{font-size:56px}
-    .graph{height:120px}
-  }
+    body {
+        font-family: Arial, sans-serif;
+        background: #121212;
+        color: white;
+        text-align: center;
+        padding: 20px;
+    }
+    h1 {
+        color: #00ff88;
+    }
+    .card {
+        background: #1e1e1e;
+        border-radius: 12px;
+        padding: 20px;
+        max-width: 300px;
+        margin: auto;
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    .valor {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #00ff88;
+    }
+    .sub {
+        font-size: 1.2em;
+        margin-top: 10px;
+        color: #ccc;
+    }
+    button {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 1em;
+        border: none;
+        border-radius: 8px;
+        background: #00ff88;
+        color: black;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button:hover {
+        background: #00cc6e;
+    }
+    input {
+        width: 100px;
+        padding: 5px;
+        margin-top: 5px;
+        text-align: center;
+        border-radius: 5px;
+        border: none;
+        font-size: 1em;
+    }
+    table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #333;
+        padding: 8px;
+        font-size: 0.9em;
+    }
+    th {
+        background: #222;
+    }
+    #online {
+        font-size: 1.2em;
+        margin-top: 15px;
+        color: #00ff88;
+    }
 </style>
 </head>
 <body>
-  <header>
-    <h1>🎯 Aviator — Painel de Sinais</h1>
-    <div class="sub">Aposta fixa: <strong>30 MZN</strong></div>
-  </header>
 
-  <main class="wrap">
-    <!-- Left -->
-    <section class="panel">
-      <div class="top">
-        <div class="left">
-          <div id="multiplier" class="mult">—</div>
-          <div class="mult-sub">Multiplicador atual</div>
+<h1>🎯 Bot de Sinais Aviator</h1>
 
-          <div style="margin-top:14px" class="controls">
-            <div class="bet-fixed">Valor fixo: <strong>30 MZN</strong></div>
-          </div>
+<!-- Онлайн игроков -->
+<div id="online">👥 Jogadores online: --</div>
 
-          <div class="controls" style="margin-top:10px">
-            <button id="placeBtn" class="btn btn-primary">Colocar Aposta</button>
-            <button id="getSignalBtn" class="btn btn-ghost">Obter Sinal</button>
-            <button id="cashBtn" class="btn btn-ghost btn-disabled" disabled>Cashout</button>
-          </div>
+<!-- Виджет -->
+<div class="card">
+    <div class="valor" id="coef">--</div>
+    <div class="sub">Coeficiente</div>
+    <hr style="margin:20px 0; border: 1px solid #333;">
+    <input type="number" id="valorAposta" value="30" min="1"> MZN
+    <div class="sub">Valor da aposta</div>
+    <button onclick="gerarSinal()">Gerar Novo Sinal</button>
+</div>
 
-          <div class="status" style="margin-top:12px">
-            <div class="pill" id="statePill">Estado: aguardando</div>
-            <div class="pill" id="lastSignal">Último sinal: --</div>
-            <div class="pill" id="players">👥 -- online</div>
-          </div>
-        </div>
+<!-- Кнопки управления -->
+<div style="margin-top:20px;">
+    <button onclick="iniciarAutomatico()">Iniciar automático</button>
+    <button onclick="pararAutomatico()">Parar automático</button>
+    <button onclick="limparLog()">Limpar log</button>
+</div>
 
-        <div class="graph">
-          <canvas id="graph" width="420" height="160"></canvas>
-        </div>
-      </div>
-
-      <div style="margin-top:12px;color:var(--muted);font-size:13px;text-align:center">Pressione "Obter Sinal" para receber o coeficiente — o valor permanece até o próximo sinal.</div>
-    </section>
-
-    <!-- Right: chat + sinais -->
-    <aside class="panel">
-      <div style="display:flex;justify-content:space-between;align-items:center">
-        <strong>Chat ao vivo</strong>
-        <div style="color:var(--muted);font-size:13px">Jogadores</div>
-      </div>
-
-      <div id="chatBox" class="chat-box" role="log" aria-live="polite"></div>
-
-      <div class="chat-form" style="margin-top:10px">
-        <input id="chatInput" class="chat-input" placeholder="Mensagem anônima — ex.: 'Cashout 3.2x!'" />
-        <button id="sendBtn" class="btn btn-primary">Enviar</button>
-      </div>
-
-      <div style="margin-top:12px">
-        <strong style="display:block;margin-bottom:8px">Sinais recentes</strong>
-        <div id="signals" class="signals"></div>
-      </div>
-    </aside>
-  </main>
-
-  <div class="flashWrap"><div id="flashCircle" class="flashCircle"></div></div>
+<!-- Лог -->
+<table id="log">
+    <thead>
+        <tr>
+            <th>Hora</th>
+            <th>Coeficiente</th>
+            <th>Valor</th>
+            <th>Confiança</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
 <script>
-/* Dark fixed interface + fixed sound on each signal
-   - ставка фиксирована (30 MZN)
-   - коэфф остаётся на экране до следующего нажатия
-   - звук один и тот же (WebAudio synth) проигрывается при каждом сигнале
-   - чат автофразы на португальском + пользователь может отправлять сообщения
-*/
+let intervaloID = null;
 
-const MIN_BET = 30;
-let state = {
-  betPlaced: false,
-  betAmount: MIN_BET,
-  lastCoef: null,
-  cashed: false,
-  players: 0
-};
+// Генерация коэффициента
+function gerarSinal() {
+    let coef = (Math.random() * 4 + 1).toFixed(2);
+    let confianca = ["baixa", "média", "alta"][Math.floor(Math.random() * 3)];
+    let valor = document.getElementById("valorAposta").value;
+    document.getElementById("coef").textContent = coef + "x";
 
-/* DOM */
-const multiplierEl = document.getElementById('multiplier');
-const statePill = document.getElementById('statePill');
-const lastSignalEl = document.getElementById('lastSignal');
-const playersEl = document.getElementById('players');
-const placeBtn = document.getElementById('placeBtn');
-const getSignalBtn = document.getElementById('getSignalBtn');
-const cashBtn = document.getElementById('cashBtn');
-const chatBox = document.getElementById('chatBox');
-const sendBtn = document.getElementById('sendBtn');
-const chatInput = document.getElementById('chatInput');
-const signalsEl = document.getElementById('signals');
-const flashCircle = document.getElementById('flashCircle');
-
-const canvas = document.getElementById('graph');
-const ctx = canvas.getContext('2d');
-
-/* WebAudio fixed sound (same each time) */
-const AudioCtx = window.AudioContext || window.webkitAudioContext;
-const audioCtx = AudioCtx ? new AudioCtx() : null;
-
-function playFixedSound(){
-  if(!audioCtx) return;
-  const now = audioCtx.currentTime;
-  // short whoosh + bell-like hit to simulate "signal"
-  // whoosh (noise burst)
-  const len = Math.floor(audioCtx.sampleRate * 0.32);
-  const buffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
-  const data = buffer.getChannelData(0);
-  for(let i=0;i<len;i++) data[i] = (Math.random()*2 - 1) * (1 - i/len) * 0.7;
-  const src = audioCtx.createBufferSource(); src.buffer = buffer;
-  const flt = audioCtx.createBiquadFilter(); flt.type = 'lowpass';
-  flt.frequency.setValueAtTime(1800, now);
-  src.connect(flt); flt.connect(audioCtx.destination);
-  src.start(now); src.stop(now + 0.36);
-
-  // bell-tone (quick)
-  const osc = audioCtx.createOscillator();
-  const gain = audioCtx.createGain();
-  osc.type = 'triangle';
-  osc.frequency.setValueAtTime(880, now + 0.06);
-  gain.gain.setValueAtTime(0.0001, now + 0.06);
-  gain.gain.linearRampToValueAtTime(0.16, now + 0.08);
-  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.5);
-  osc.connect(gain); gain.connect(audioCtx.destination);
-  osc.start(now + 0.06); osc.stop(now + 0.5);
+    let agora = new Date().toLocaleTimeString();
+    let linha = `<tr>
+        <td>${agora}</td>
+        <td>${coef}x</td>
+        <td>${valor} MZN</td>
+        <td>${confianca}</td>
+    </tr>`;
+    document.querySelector("#log tbody").insertAdjacentHTML("afterbegin", linha);
 }
 
-/* Flash visual */
-function flashPulse(color='rgba(150,220,200,0.9)'){
-  flashCircle.style.background = `radial-gradient(circle, ${color}, rgba(0,0,0,0))`;
-  flashCircle.classList.add('flashShow');
-  setTimeout(()=> flashCircle.classList.remove('flashShow'), 550);
+// Автоматический режим
+function iniciarAutomatico() {
+    if (!intervaloID) {
+        intervaloID = setInterval(gerarSinal, 5000);
+    }
+}
+function pararAutomatico() {
+    clearInterval(intervaloID);
+    intervaloID = null;
 }
 
-/* Fake online counter */
-function updatePlayers(){
-  state.players = Math.floor(Math.random()*220 + 30);
-  playersEl.textContent = '👥 ' + state.players + ' online';
-}
-setInterval(updatePlayers, 3000);
-updatePlayers();
-
-/* Chat messages (Português - Moçambique style) */
-const autoMsgs = [
-  "Peguei 3.2x — bom lucro!",
-  "Perdi 30 MZN, entrou cedo 😅",
-  "Cashout 2.5x, nice!",
-  "Alguém usa estratégia simples de 1.5x?",
-  "Deu 5x agora, que sorte!",
-  "30 voltou 120 MZN 💸",
-  "Quem seguiu o sinal? Partilha aí!",
-  "Cravou em 1.12x, perdi essa",
-  "Boa rodada, vou tentar outra"
-];
-
-function pushChat(user, text, cls=''){
-  const el = document.createElement('div');
-  el.className = 'msg ' + (cls||'');
-  const who = document.createElement('div'); who.className = 'who'; who.textContent = user;
-  const body = document.createElement('div'); body.className = 'body'; body.textContent = text;
-  el.appendChild(who); el.appendChild(body);
-  chatBox.appendChild(el);
-  chatBox.scrollTop = chatBox.scrollHeight;
+// Очистка лога
+function limparLog() {
+    document.querySelector("#log tbody").innerHTML = "";
 }
 
-/* spawn auto messages */
-function spawnAuto(){
-  const id = 'Jogador' + Math.floor(Math.random()*9000 + 1000);
-  const text = autoMsgs[Math.floor(Math.random()*autoMsgs.length)];
-  const cls = /Peguei|Cashout|nice|Bom|Boa|Pegou|Cashout/i.test(text) ? 'win' : '';
-  pushChat(id, text, cls);
+// Фейковый онлайн игроков
+function atualizarOnline() {
+    let jogadores = Math.floor(Math.random() * 50) + 50; // от 50 до 100
+    document.getElementById("online").textContent = "👥 Jogadores online: " + jogadores;
 }
-setInterval(spawnAuto, 3200);
-spawnAuto();
-
-/* user send */
-sendBtn.addEventListener('click', ()=>{
-  const v = chatInput.value.trim();
-  if(!v) return;
-  pushChat('Você', v, /pegou|peguei|cashout|lucro|bom|boa/i.test(v) ? 'win' : '');
-  chatInput.value = '';
-});
-chatInput.addEventListener('keydown', e => { if(e.key === 'Enter') sendBtn.click(); });
-
-/* signals list helper */
-function addSignalToList(coef){
-  const row = document.createElement('div');
-  row.className = 'signalRow';
-  row.innerHTML = `<div>${new Date().toLocaleTimeString()}</div><div style="color:var(--muted)">${coef}x</div>`;
-  signalsEl.prepend(row);
-  while(signalsEl.children.length > 12) signalsEl.removeChild(signalsEl.lastChild);
-}
-
-/* Generate coefficient (only on button click). It stays until next click */
-getSignalBtn.addEventListener('click', ()=>{
-  // biased random toward low coefs
-  let raw = Math.pow(Math.random(), 1.4) * 5.5 + 1.05;
-  raw = Math.max(1.05, Math.min(raw, 18));
-  const coef = Number(raw.toFixed(2));
-  state.lastCoef = coef;
-  multiplierEl.textContent = coef.toFixed(2) + 'x';
-  lastSignalEl.textContent = 'Último sinal: ' + coef.toFixed(2) + 'x';
-  addSignalToList(coef.toFixed(2));
-  pushChat('SinalBot', `Sinal sugerido: ${coef.toFixed(2)}x`);
-  // play the same fixed sound each time
-  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
-  playFixedSound();
-  flashPulse();
-  // enable cashout if bet placed and not yet cashed
-  if(state.betPlaced && !state.cashed){
-    cashBtn.disabled = false;
-    cashBtn.classList.remove('btn-disabled');
-  }
-});
-
-/* Place fixed bet 30 MZN */
-placeBtn.addEventListener('click', ()=>{
-  if(state.betPlaced){
-    alert('Já tem aposta pendente (30 MZN).');
-    return;
-  }
-  state.betPlaced = true;
-  state.betAmount = MIN_BET;
-  state.cashed = false;
-  pushChat('Você', `Coloquei ${MIN_BET} MZN na próxima rodada`, 'win');
-});
-
-/* Cashout uses lastCoef to compute payout and stays as historic entry */
-cashBtn.addEventListener('click', ()=>{
-  if(!state.betPlaced || !state.lastCoef || state.cashed){
-    alert('Sem aposta ativa ou sem sinal disponível.');
-    return;
-  }
-  const payout = (state.betAmount * state.lastCoef).toFixed(2);
-  state.cashed = true;
-  cashBtn.disabled = true;
-  cashBtn.classList.add('btn-disabled');
-  pushChat('Você', `Cashout em ${state.lastCoef.toFixed(2)}x → Recebeu ${payout} MZN`, 'win');
-  flashPulse('rgba(150,255,200,0.95)');
-});
-
-/* Simple decorative graph to be visually alive (no game logic) */
-let graph = [{x:0,y:1}];
-function graphPush(v){ graph.push({x:graph.length,y:v}); if(graph.length>300) graph.shift(); }
-function drawGraph(){
-  const W = canvas.width = canvas.clientWidth * (window.devicePixelRatio || 1);
-  const H = canvas.height = canvas.clientHeight * (window.devicePixelRatio || 1);
-  ctx.clearRect(0,0,W,H);
-  const view = graph.slice(-120);
-  const maxY = Math.max(...view.map(p=>p.y), 3);
-  ctx.beginPath();
-  for(let i=0;i<view.length;i++){
-    const p = view[i];
-    const sx = (i / (view.length-1 || 1)) * W;
-    const sy = H - ((p.y / maxY) * (H - 12)) - 6;
-    if(i===0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
-  }
-  ctx.strokeStyle = 'rgba(120,160,150,0.95)';
-  ctx.lineWidth = 2 * (window.devicePixelRatio || 1);
-  ctx.stroke();
-  ctx.lineTo(W,H); ctx.lineTo(0,H); ctx.closePath();
-  const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0, 'rgba(120,160,150,0.06)');
-  grad.addColorStop(1, 'rgba(120,160,150,0.01)');
-  ctx.fillStyle = grad; ctx.fill();
-}
-setInterval(()=>{
-  const last = graph.length ? graph[graph.length-1].y : 1;
-  const next = Math.max(1, last + (Math.random()-0.5)*0.04);
-  graphPush(next);
-  drawGraph();
-}, 900);
-
-/* initial seeds */
-(function seed(){
-  addSignalToList('—');
-  pushChat('Sistema', 'Bem-vindo(a) ao painel de sinais.');
-  pushChat('Sistema', 'Aposta fixa: 30 MZN. Use "Obter Sinal" para receber um coeficiente.');
-})();
+setInterval(atualizarOnline, 3000);
+atualizarOnline();
 </script>
+
 </body>
 </html>
+
 
 
 
