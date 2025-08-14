@@ -12,7 +12,6 @@
         color: white;
         text-align: center;
     }
-    /* Экран загрузки */
     #loading {
         position: fixed;
         top:0; left:0; width:100%; height:100%;
@@ -25,7 +24,6 @@
         font-size: 1.5em;
         color: #00ff88;
     }
-    /* Ввод ID */
     #login {
         display: none;
         margin-top: 50px;
@@ -48,7 +46,6 @@
         font-weight: bold;
         cursor: pointer;
     }
-    /* Основной интерфейс */
     #main {
         display: none;
         padding: 20px;
@@ -79,24 +76,10 @@
         font-weight: bold;
     }
     button.main-btn:hover { background: #00cc6e; }
-
-    /* Чат */
-    #chat-container {
-        max-width: 400px;
-        margin: 20px auto;
-        background: #1e1e1e;
-        border-radius: 12px;
-        padding: 10px;
-        height: 250px;
-        overflow-y: auto;
-        text-align: left;
-    }
-    .chat-msg {
-        margin: 5px 0;
-    }
-    .chat-msg span {
+    #online {
+        margin-top: 20px;
+        font-size: 1.2em;
         color: #00ff88;
-        font-weight: bold;
     }
 </style>
 </head>
@@ -113,14 +96,14 @@
 
 <div id="main">
     <h1>🎯 Bot de Sinais Aviator</h1>
+    <div id="online">👥 Jogadores online: --</div>
     <div class="card">
         <div class="valor" id="coef">--</div>
         <button class="main-btn" onclick="gerarSinal()">Obter Sinal ✈️</button>
     </div>
-    
-    <button class="main-btn" onclick="toggleChat()">Abrir Chat</button>
-    
-    <div id="chat-container" style="display:none;"></div>
+    <a href="https://t.me/RafaeL_Hack_bot" target="_blank">
+        <button class="main-btn">Suporte / Telegram</button>
+    </a>
 </div>
 
 <script>
@@ -141,48 +124,28 @@ function entrar() {
     erro.textContent = "";
     document.getElementById('login').style.display = 'none';
     document.getElementById('main').style.display = 'block';
-    startChat();
 }
 
 // Генерация коэффициента
 function gerarSinal() {
     let coef = (Math.random() * 4 + 1).toFixed(2);
     document.getElementById('coef').textContent = coef + "x";
-    // Звук самолета
     const audio = new Audio('https://actions.google.com/sounds/v1/transport/airplane_flyby.ogg');
     audio.play();
 }
 
-// Чат
-let chatOpen = false;
-let chatInterval = null;
-function toggleChat(){
-    const chat = document.getElementById('chat-container');
-    chatOpen = !chatOpen;
-    chat.style.display = chatOpen ? 'block' : 'none';
+// Онлайн-счетчик (фейковый)
+function atualizarOnline() {
+    const jogadores = Math.floor(Math.random() * 50) + 50; // 50-100
+    document.getElementById('online').textContent = "👥 Jogadores online: " + jogadores;
 }
-
-function startChat(){
-    const users = ["Carlos","Ana","Miguel","Fatima","Joao","Maria"];
-    const messages = ["Funcionou!","Qual será o próximo coef?","Quanto apostar?","Boa sorte!","Eu ganhei!","Atenção ao coef!"];
-    const chat = document.getElementById('chat-container');
-
-    chatInterval = setInterval(() => {
-        if(chatOpen){
-            const user = users[Math.floor(Math.random()*users.length)];
-            const msg = messages[Math.floor(Math.random()*messages.length)];
-            const div = document.createElement('div');
-            div.className = 'chat-msg';
-            div.innerHTML = `<span>${user}:</span> ${msg}`;
-            chat.appendChild(div);
-            chat.scrollTop = chat.scrollHeight;
-        }
-    }, 2000);
-}
+setInterval(atualizarOnline, 3000);
+atualizarOnline();
 </script>
 
 </body>
 </html>
+
 
 
 
