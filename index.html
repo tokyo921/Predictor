@@ -1,329 +1,162 @@
 <!DOCTYPE html>
-<html lang="pt-BR">
+<html lang="pt">
 <head>
-  <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Aviator – Gerador de Sinais (Fictício)</title>
-  <style>
-    :root {
-      --bg: #0b1020;
-      --panel: #121a35;
-      --accent: #6ee7ff;
-      --accent-2: #a78bfa;
-      --text: #e8f3ff;
-      --muted: #9fb3c8;
-      --danger: #ff6b6b;
-      --ok: #6bff95;
-    }
-    * { box-sizing: border-box; }
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Bot de Sinais Aviator</title>
+<style>
     body {
-      margin: 0; background: linear-gradient(180deg, #0b1020, #0b1020 40%, #0e1430 100%);
-      color: var(--text); font: 16px/1.5 system-ui, -apple-system, Segoe UI, Roboto, Ubuntu, Cantarell, Noto Sans, sans-serif;
-      min-height: 100dvh; display: grid; place-items: center; padding: 24px;
+        font-family: Arial, sans-serif;
+        background: #121212;
+        color: white;
+        text-align: center;
+        padding: 20px;
     }
-    .app { width: min(1100px, 100%); }
-    .header { display:flex; gap:14px; align-items:center; justify-content:space-between; margin-bottom:16px; }
-    h1 { margin:0; font-size: clamp(20px, 2.4vw, 28px); letter-spacing: .3px; }
-    .badge { background: linear-gradient(90deg, var(--accent), var(--accent-2)); color:#051524; font-weight:700; padding:6px 10px; border-radius:999px; }
-
-    .grid { display:grid; grid-template-columns: 1.2fr .8fr; gap:16px; }
-    @media (max-width: 900px){ .grid{ grid-template-columns: 1fr; } }
-
-    .card { background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
-            border:1px solid rgba(255,255,255,.08); border-radius:18px; padding:16px; backdrop-filter: blur(6px); }
-
-    .controls { display:flex; flex-wrap:wrap; gap:10px; align-items:center; }
-    button, .btn {
-      appearance:none; border:1px solid rgba(255,255,255,.12); background:#121a35; color:var(--text);
-      padding:10px 14px; border-radius:12px; cursor:pointer; font-weight:600; transition: .15s transform, .15s background, .15s border;
+    h1 {
+        color: #00ff88;
     }
-    button:hover { transform: translateY(-1px); border-color: rgba(255,255,255,.25); }
-    button.primary { background: linear-gradient(90deg, #2dd4bf, #60a5fa); color:#07121f; border:none; }
-    button.danger { background: #25121a; border-color: #ff7b7b44; color:#ffd6d6; }
-    button.ghost { background: transparent; }
-
-    .row { display:grid; grid-template-columns: repeat(2, 1fr); gap:10px; }
-    .row3 { display:grid; grid-template-columns: repeat(3, 1fr); gap:10px; }
-    @media (max-width: 520px){ .row, .row3{ grid-template-columns: 1fr; } }
-
-    label { font-size:13px; color: var(--muted); }
-    input, select { width:100%; padding:10px 12px; border-radius:12px; border:1px solid rgba(255,255,255,.12); background:#0f1730; color:var(--text); }
-
-    .signal { border-left:4px solid var(--accent); padding-left:12px; }
-    .mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, "Liberation Mono", monospace; }
-
-    table { width:100%; border-collapse: collapse; }
-    th, td { padding:10px 8px; border-bottom:1px dashed rgba(255,255,255,.08); text-align:left; font-size:14px; }
-    th { color: var(--muted); font-weight:600; }
-
-    .muted { color: var(--muted); }
-    .pill { padding:2px 8px; border-radius:999px; border:1px solid rgba(255,255,255,.14); font-size:12px; }
-    .pill.success { color:#05250f; background: #86efac; border-color: #05250f22; }
-    .pill.warn { color:#2b160a; background: #fcd34d; border-color: #2b160a22; }
-    .pill.danger { color:#2b0a0a; background: #fda4af; border-color: #2b0a0a22; }
-
-    .footer { margin-top: 10px; font-size: 13px; color: var(--muted); }
-  </style>
+    .card {
+        background: #1e1e1e;
+        border-radius: 12px;
+        padding: 20px;
+        max-width: 300px;
+        margin: auto;
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    .valor {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #00ff88;
+    }
+    .sub {
+        font-size: 1.2em;
+        margin-top: 10px;
+        color: #ccc;
+    }
+    button {
+        margin: 5px;
+        padding: 10px 20px;
+        font-size: 1em;
+        border: none;
+        border-radius: 8px;
+        background: #00ff88;
+        color: black;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button:hover {
+        background: #00cc6e;
+    }
+    table {
+        width: 100%;
+        margin-top: 20px;
+        border-collapse: collapse;
+    }
+    th, td {
+        border: 1px solid #333;
+        padding: 8px;
+        font-size: 0.9em;
+    }
+    th {
+        background: #222;
+    }
+</style>
 </head>
 <body>
-  <div class="app">
-    <div class="header">
-      <h1>🎯 Aviator — Gerador de Sinais <span class="badge mono">FICTÍCIO</span></h1>
-      <div class="muted">Uso educacional/entretenimento · Sem garantias</div>
-    </div>
 
-    <div class="grid">
-      <!-- Painel esquerdo: Último sinal + Log -->
-      <section class="card">
-        <div class="controls" style="margin-bottom:12px">
-          <button id="btnOne" class="primary">Gerar sinal</button>
-          <button id="btnAuto">Iniciar automático</button>
-          <button id="btnStop" class="danger">Parar</button>
-          <button id="btnExport" class="ghost">Exportar CSV</button>
-          <button id="btnClear" class="ghost">Limpar log</button>
-        </div>
+<h1>🎯 Bot de Sinais Aviator</h1>
 
-        <div id="last" class="signal">
-          <div class="muted">Nenhum sinal ainda.</div>
-        </div>
+<!-- Виджет с коэффициентом и ставкой -->
+<div class="card">
+    <div class="valor" id="coef">--</div>
+    <div class="sub">Coeficiente</div>
+    <hr style="margin:20px 0; border: 1px solid #333;">
+    <div class="valor">30 MZN</div>
+    <div class="sub">Valor da aposta</div>
+    <button onclick="gerarSinal()">Gerar Novo Sinal</button>
+</div>
 
-        <div style="margin-top:12px; overflow:auto; max-height: 42vh;">
-          <table id="logTable">
-            <thead>
-              <tr>
-                <th>Hora</th>
-                <th>Entrada</th>
-                <th>Stake</th>
-                <th>Estratégia</th>
-                <th>Stops</th>
-                <th>Confiança</th>
-                <th>Risco</th>
-              </tr>
-            </thead>
-            <tbody></tbody>
-          </table>
-        </div>
-      </section>
+<!-- Кнопки управления -->
+<div style="margin-top:20px;">
+    <button onclick="gerarSinalCompleto()">Gerar sinal completo</button>
+    <button onclick="iniciarAutomatico()">Iniciar automático</button>
+    <button onclick="pararAutomatico()">Parar automático</button>
+    <button onclick="exportarCSV()">Exportar CSV</button>
+    <button onclick="limparLog()">Limpar log</button>
+</div>
 
-      <!-- Painel direito: Configurações -->
-      <aside class="card">
-        <h3 style="margin-top:0">⚙️ Configurações</h3>
-        <div class="row3">
-          <div>
-            <label>Base</label>
-            <input id="base" type="number" min="0.1" step="0.1" value="2.0">
-          </div>
-          <div>
-            <label>Risco</label>
-            <select id="risco">
-              <option value="baixo">baixo</option>
-              <option value="medio" selected>medio</option>
-              <option value="alto">alto</option>
-            </select>
-          </div>
-          <div>
-            <label>Intervalo (sinais automáticos)</label>
-            <input id="intervalo" type="number" min="1" max="600" step="1" value="10">
-          </div>
-        </div>
-        <div style="height:10px"></div>
-        <div class="row">
-          <label style="display:flex; gap:8px; align-items:center">
-            <input id="csvAuto" type="checkbox" checked>
-            Salvar automaticamente no CSV
-          </label>
-          <label style="display:flex; gap:8px; align-items:center">
-            <input id="contagem" type="checkbox" checked>
-            Mostrar contagem regressiva
-          </label>
-        </div>
-        <div style="height:10px"></div>
-        <button id="btnSave">Salvar configurações</button>
-        <div class="footer">As configurações são guardadas no <span class="mono">localStorage</span>.</div>
-
-        <div style="margin-top:16px" class="muted">
-          ⚠️ Este gerador é <b>fictício</b> e não prevê resultados reais. Jogue com responsabilidade.
-        </div>
-      </aside>
-    </div>
-  </div>
+<!-- Лог сигналов -->
+<table id="log">
+    <thead>
+        <tr>
+            <th>Hora</th>
+            <th>Coeficiente</th>
+            <th>Valor</th>
+            <th>Confiança</th>
+        </tr>
+    </thead>
+    <tbody></tbody>
+</table>
 
 <script>
-(function(){
-  const RISK_MAP = { baixo: 0.5, medio: 1.0, alto: 1.7 };
-  const DEFAULTS = { base: 2.0, risco: 'medio', intervalo: 10, csv_auto: true, contagem: true };
+let intervaloID = null;
 
-  // ----- Estado & Persistência -----
-  const state = loadState();
-  let timer = null;
-  const log = [];
+// Генерация только коэффициента
+function gerarSinal() {
+    let coef = (Math.random() * 4 + 1).toFixed(2);
+    document.getElementById("coef").textContent = coef + "x";
+}
 
-  function loadState(){
-    try{
-      const raw = localStorage.getItem('aviator_sinais_cfg');
-      if(!raw) return { ...DEFAULTS };
-      const cfg = JSON.parse(raw);
-      return { ...DEFAULTS, ...cfg };
-    }catch(e){ return { ...DEFAULTS }; }
-  }
-  function saveState(){
-    localStorage.setItem('aviator_sinais_cfg', JSON.stringify(state));
-  }
+// Генерация полного сигнала с записью в лог
+function gerarSinalCompleto() {
+    let coef = (Math.random() * 4 + 1).toFixed(2);
+    let confianca = ["baixa", "média", "alta"][Math.floor(Math.random() * 3)];
+    document.getElementById("coef").textContent = coef + "x";
 
-  // ----- Util -----
-  function clamp(n, min, max){ return Math.max(min, Math.min(max, n)); }
-  function rnd(min, max){ return Math.random()*(max-min)+min; }
-  function now(){
-    const d = new Date();
-    const pad = n => String(n).padStart(2,'0');
-    return `${d.getFullYear()}-${pad(d.getMonth()+1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}:${pad(d.getSeconds())}`;
-  }
+    let agora = new Date().toLocaleTimeString();
+    let linha = `<tr>
+        <td>${agora}</td>
+        <td>${coef}x</td>
+        <td>30 MZN</td>
+        <td>${confianca}</td>
+    </tr>`;
+    document.querySelector("#log tbody").insertAdjacentHTML("afterbegin", linha);
+}
 
-  function gerarSinal(){
-    const base = Number(state.base) || DEFAULTS.base;
-    const risco = String(state.risco || 'medio');
-    const fator = RISK_MAP[risco] ?? 1.0;
-    const stake = Math.round(Math.max(base*0.5, Math.min(base*(0.9+fator), base*3.0)) * 100)/100;
-    const estrategias = [
-      'Flat (sem progressão)',
-      'Gestão 1-2 (aumentar levemente após perda)',
-      'Stop rápido (1 gale no máximo)'
-    ];
-    const estrategia = estrategias[Math.floor(Math.random()*estrategias.length)];
-    const atraso = [0,5,10,15,20,30][Math.floor(Math.random()*6)];
-    const stop_win = Math.round(stake * (1.2 + Math.random()*0.8) * 100)/100;
-    const stop_loss = Math.round(stake * (1.0 + Math.random()*1.0) * 100)/100;
-    const confs = ['baixa','média','alta'];
-    const confianca = confs[Math.floor(Math.random()*confs.length)];
-    return { hora: now(), stake, estrategia, atraso, stop_win, stop_loss, confianca, risco, base };
-  }
+// Авто-режим
+function iniciarAutomatico() {
+    if (intervaloID) return;
+    intervaloID = setInterval(gerarSinalCompleto, 5000); // каждые 5 секунд
+}
+function pararAutomatico() {
+    clearInterval(intervaloID);
+    intervaloID = null;
+}
 
-  function contagemRegressiva(seg, el){
-    return new Promise(resolve => {
-      if(!state.contagem || seg<=0){ resolve(); return; }
-      const span = document.createElement('span');
-      span.className = 'pill warn';
-      span.style.marginLeft = '8px';
-      el.appendChild(span);
-      let n = seg;
-      span.textContent = `${n}s`;
-      const id = setInterval(()=>{
-        n--; span.textContent = `${n}s`;
-        if(n<=0){ clearInterval(id); span.textContent='pronto'; span.className='pill success'; setTimeout(()=>span.remove(), 1200); resolve(); }
-      }, 1000);
+// Экспорт CSV
+function exportarCSV() {
+    let linhas = [["Hora", "Coeficiente", "Valor", "Confiança"]];
+    document.querySelectorAll("#log tbody tr").forEach(tr => {
+        let cols = Array.from(tr.querySelectorAll("td")).map(td => td.innerText);
+        linhas.push(cols);
     });
-  }
+    let csvContent = linhas.map(e => e.join(",")).join("\n");
+    let blob = new Blob([csvContent], { type: "text/csv" });
+    let url = URL.createObjectURL(blob);
+    let a = document.createElement("a");
+    a.href = url;
+    a.download = "sinais_aviator.csv";
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+}
 
-  function renderLast(s){
-    const last = document.getElementById('last');
-    const quando = s.atraso===0 ? 'agora' : `em ${s.atraso}s`;
-    last.innerHTML = `
-      <div style="display:flex; align-items:center; gap:10px; flex-wrap:wrap;">
-        <div class="pill">${s.hora}</div>
-        <div class="pill">Risco: <b class="mono">${s.risco}</b></div>
-        <div class="pill">Base: <b class="mono">${s.base}</b></div>
-        <div class="pill">Confiança: <b>${s.confianca}</b></div>
-      </div>
-      <h3 style="margin:10px 0 8px 0">Entrada: <span class="mono">${quando}</span></h3>
-      <div class="row">
-        <div>
-          <div class="muted">Stake sugerida</div>
-          <div class="mono" style="font-size:22px">${s.stake}</div>
-        </div>
-        <div>
-          <div class="muted">Estratégia</div>
-          <div class="mono" style="font-size:16px">${s.estrategia}</div>
-        </div>
-      </div>
-      <div class="row" style="margin-top:6px">
-        <div>
-          <div class="muted">Stop‑win</div>
-          <div class="mono">${s.stop_win}</div>
-        </div>
-        <div>
-          <div class="muted">Stop‑loss</div>
-          <div class="mono">${s.stop_loss}</div>
-        </div>
-      </div>
-      <div class="muted" style="margin-top:10px">⚠️ Sinal gerado automaticamente e <b>não</b> garante resultados.</div>
-    `;
-
-    // contagem visual ao lado do título "Entrada"
-    const h3 = last.querySelector('h3');
-    contagemRegressiva(s.atraso, h3);
-  }
-
-  function appendLog(s){
-    log.push(s);
-    const tb = document.querySelector('#logTable tbody');
-    const tr = document.createElement('tr');
-    tr.innerHTML = `
-      <td class="mono">${s.hora}</td>
-      <td>${s.atraso===0?'agora':`em ${s.atraso}s`}</td>
-      <td class="mono">${s.stake}</td>
-      <td>${s.estrategia}</td>
-      <td class="mono">${s.stop_win} / ${s.stop_loss}</td>
-      <td>${s.confianca}</td>
-      <td>${s.risco}</td>
-    `;
-    tb.prepend(tr);
-  }
-
-  function exportCSV(){
-    if(!log.length){ alert('Sem dados no log. Gere um sinal primeiro.'); return; }
-    const head = ['hora','entrada_em_seg','stake','estrategia','stop_win','stop_loss','confianca','risco','base'];
-    const rows = log.map(s=>[s.hora, s.atraso, s.stake, s.estrategia, s.stop_win, s.stop_loss, s.confianca, s.risco, s.base]);
-    const csv = [head.join(','), ...rows.map(r=>r.map(v=>`"${String(v).replace(/"/g,'""')}"`).join(','))].join('\n');
-    const blob = new Blob([csv], {type:'text/csv;charset=utf-8;'});
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url; a.download = `historico_sinais_${Date.now()}.csv`;
-    document.body.appendChild(a); a.click(); a.remove();
-    URL.revokeObjectURL(url);
-  }
-
-  function startAuto(){
-    stopAuto();
-    const interval = clamp(parseInt(state.intervalo)||10, 1, 600) * 1000;
-    timer = setInterval(()=>{
-      const s = gerarSinal();
-      renderLast(s); appendLog(s);
-      if(state.csv_auto) addToCsvBuffer(s);
-    }, interval);
-  }
-  function stopAuto(){ if(timer){ clearInterval(timer); timer = null; } }
-
-  // CSV buffer para modo automático (download manual via botão Exportar)
-  function addToCsvBuffer(s){
-    log.length; // já guardamos tudo no log para exportar
-  }
-
-  // ----- Bind UI -----
-  const $ = sel => document.querySelector(sel);
-  $('#base').value = state.base;
-  $('#risco').value = state.risco;
-  $('#intervalo').value = state.intervalo;
-  $('#csvAuto').checked = !!state.csv_auto;
-  $('#contagem').checked = !!state.contagem;
-
-  $('#btnSave').addEventListener('click', ()=>{
-    state.base = parseFloat($('#base').value) || DEFAULTS.base;
-    state.risco = $('#risco').value;
-    state.intervalo = clamp(parseInt($('#intervalo').value)||10, 1, 600);
-    state.csv_auto = $('#csvAuto').checked;
-    state.contagem = $('#contagem').checked;
-    saveState();
-    alert('Configurações salvas.');
-  });
-
-  $('#btnOne').addEventListener('click', ()=>{ const s = gerarSinal(); renderLast(s); appendLog(s); });
-  $('#btnAuto').addEventListener('click', ()=>{ startAuto(); alert('Modo automático iniciado.'); });
-  $('#btnStop').addEventListener('click', ()=>{ stopAuto(); });
-  $('#btnExport').addEventListener('click', exportCSV);
-  $('#btnClear').addEventListener('click', ()=>{ document.querySelector('#logTable tbody').innerHTML=''; log.length=0; });
-
-})();
+// Очистка лога
+function limparLog() {
+    document.querySelector("#log tbody").innerHTML = "";
+}
 </script>
+
 </body>
 </html>
 
