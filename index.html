@@ -391,7 +391,65 @@ function drawGraph(crash=false){
   ctx.lineWidth = 2.4;
   ctx.stroke();
   // fill under curve
-  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+  const grad = ctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0, 'rgba(46,240,166,0.08)');
+  grad.addColorStop(1, 'rgba(46,240,166,0.01)');
+  ctx.fillStyle = grad;
+  ctx.fill();
+  // draw crash point
+  if(crash){
+    ctx.fillStyle = 'rgba(255,120,120,0.14)';
+    ctx.fillRect(W-6,0,6,H);
+  }
+}
+
+// Initialize loop
+startPreRound();
+
+// Theme toggle (light/dark)
+const themeBtn = document.getElementById('themeToggle');
+let light = false;
+themeBtn.addEventListener('click', ()=>{
+  light = !light;
+  if(light){
+    document.documentElement.style.setProperty('--bg1', '#f5f8ff');
+    document.documentElement.style.setProperty('--bg2', '#eef6ff');
+    document.documentElement.style.setProperty('--card', 'rgba(0,0,0,0.03)');
+    document.documentElement.style.setProperty('--accent', '#0077ff');
+    document.documentElement.style.setProperty('--accent-2', '#00bcd4');
+    document.documentElement.style.setProperty('--muted', '#4b5563');
+    document.documentElement.style.setProperty('--text-color', '#071329');
+    themeBtn.textContent = '☀️ Claro';
+    // invert colors for multiplier
+    document.querySelectorAll('.multiplier').forEach(e=>e.style.color = 'var(--accent)');
+  } else {
+    document.documentElement.style.setProperty('--bg1', '#081428');
+    document.documentElement.style.setProperty('--bg2', '#07121f');
+    document.documentElement.style.setProperty('--card', 'rgba(255,255,255,0.04)');
+    document.documentElement.style.setProperty('--accent', '#2ef0a6');
+    document.documentElement.style.setProperty('--accent-2', '#5aa7ff');
+    document.documentElement.style.setProperty('--muted', '#9fb3c8');
+    document.documentElement.style.setProperty('--text-color', '#eaf6ff');
+    themeBtn.textContent = '🌙 Escuro';
+  }
+});
+
+// make bet input enforce min 30
+betInput.addEventListener('change', ()=>{
+  const v = Number(betInput.value);
+  if(isNaN(v) || v < MIN_BET) betInput.value = MIN_BET;
+});
+
+// slight UX: press Enter in chat sends
+chatInput.addEventListener('keydown', (e)=>{
+  if(e.key === 'Enter') sendChat.click();
+});
+</script>
+
+</body>
+</html>
+
 
 
 
