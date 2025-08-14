@@ -3,14 +3,14 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Aviator — Simulador / Sinais (Fictício)</title>
+<title>Aviator — Simulador Premium (Fictício)</title>
 <style>
   :root{
-    --bg1: #081428;
-    --bg2: #07121f;
-    --card: rgba(255,255,255,0.04);
-    --accent: #2ef0a6;
-    --accent-2: #5aa7ff;
+    --bg1: #041022;
+    --bg2: #071427;
+    --card: rgba(255,255,255,0.03);
+    --accent: #39ffb0;
+    --accent-2: #6fb7ff;
     --muted: #9fb3c8;
     --danger: #ff6b6b;
     --glass: rgba(255,255,255,0.04);
@@ -18,233 +18,317 @@
   }
   *{box-sizing:border-box}
   html,body{height:100%;margin:0;font-family:var(--font-sans);background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#eaf6ff}
-  .wrap{max-width:1100px;margin:20px auto;padding:18px;display:grid;grid-template-columns: 2fr 1fr;gap:18px}
-  @media (max-width:920px){ .wrap{grid-template-columns:1fr} }
+  .container{max-width:1200px;margin:18px auto;padding:18px;display:grid;grid-template-columns:2fr 1fr;gap:18px}
+  @media (max-width:980px){ .container{grid-template-columns:1fr} }
 
-  /* Header */
-  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-  header h1{font-size:20px;margin:0;letter-spacing:0.4px}
-  .theme-btn{background:transparent;border:1px solid rgba(255,255,255,0.08);padding:8px 10px;border-radius:8px;color:var(--muted);cursor:pointer}
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:6px}
+  header h1{font-size:20px;margin:0;letter-spacing:0.3px}
+  .small-muted{color:var(--muted);font-size:13px}
 
-  /* Left panel (main game) */
+  /* Main panel */
   .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:16px;backdrop-filter:blur(6px)}
-  .top-row{display:flex;gap:12px;align-items:center;justify-content:space-between}
-  .multibox{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(255,255,255,0.01));box-shadow:inset 0 0 30px rgba(0,0,0,0.4)}
-  .multiplier{font-size:64px;font-weight:800;letter-spacing:0.02em;color:var(--accent);text-shadow:0 8px 30px rgba(46,240,166,0.12)}
-  .sub-muted{color:var(--muted);font-size:13px;margin-top:6px}
-  .graph-wrap{width:320px;height:110px;border-radius:8px;padding:6px;background:linear-gradient(180deg, rgba(255,255,255,0.007), rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center}
-  .controls{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;justify-content:center}
-  button.btn{padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
-  .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#03111a;box-shadow:0 8px 30px rgba(46,240,166,0.08)}
-  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
-  .btn-danger{background:linear-gradient(90deg,#ff7b7b,#ff5252);color:#2b0a0a}
+  .top{display:flex;gap:14px;align-items:flex-start;flex-wrap:wrap}
+  .leftMain{flex:1;display:flex;flex-direction:column;align-items:center;padding:12px;border-radius:12px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.005))}
+  .mult{font-size:76px;font-weight:800;color:var(--accent);text-shadow:0 8px 30px rgba(57,255,176,0.08)}
+  .mult-mini{font-size:14px;color:var(--muted);margin-top:6px}
+  .graphCard{width:420px;max-width:48%;min-width:260px;height:160px;border-radius:10px;padding:8px;background:linear-gradient(180deg, rgba(255,255,255,0.007), rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center}
+  @media (max-width:980px){ .graphCard{max-width:100%;width:100%} .leftMain{width:100%} }
 
-  /* Bet area */
-  .bet-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px}
-  .bet-input{width:120px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.25);color:inherit;text-align:center;font-weight:700}
-  .note{font-size:12px;color:var(--muted);margin-top:8px;text-align:center}
+  /* Controls */
+  .controls{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px;flex-wrap:wrap}
+  .betRow{display:flex;gap:8px;align-items:center}
+  .betInput{width:120px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.22);color:inherit;text-align:center;font-weight:700}
+  button.btn{padding:12px 20px;border-radius:10px;border:none;cursor:pointer;font-weight:800;letter-spacing:0.3px}
+  .primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#041525;box-shadow:0 8px 30px rgba(57,255,176,0.06)}
+  .ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+  .danger{background:linear-gradient(90deg,#ff8b8b,#ff6767);color:#2a0a0a}
 
-  /* Status bar */
-  .status{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:12px;color:var(--muted);font-size:13px}
+  .statusRow{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px;color:var(--muted);font-size:13px}
   .pill{background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.03)}
 
-  /* Right panel (chat + info) */
-  .chat-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
-  .chat-box{height:460px;overflow:auto;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.008));border:1px solid rgba(255,255,255,0.03)}
-  .msg{margin-bottom:10px;padding:8px;border-radius:8px;background:rgba(0,0,0,0.16);border:1px solid rgba(255,255,255,0.02)}
-  .msg .who{font-weight:700;color:var(--accent-2);font-size:13px;margin-bottom:4px}
-  .msg.win{border-left:4px solid #7ef59c}
-  .msg.lose{border-left:4px solid #ff8b8b}
-  .chat-form{display:flex;gap:8px;margin-top:8px}
-  .chat-input{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.2);color:inherit}
-  .small{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+  /* Right column: Chat + Signals list */
+  .aside{display:flex;flex-direction:column;gap:12px}
+  .chatBox{flex:1;min-height:360px;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));border:1px solid rgba(255,255,255,0.03);overflow:auto}
+  .chatMsg{padding:8px;border-radius:8px;margin-bottom:10px;background:rgba(0,0,0,0.12);border:1px solid rgba(255,255,255,0.02)}
+  .chatWho{font-weight:700;color:var(--accent-2);font-size:13px;margin-bottom:4px}
+  .chatWin{border-left:4px solid #7ef59c}
+  .chatLose{border-left:4px solid #ff8b8b}
+  .chatForm{display:flex;gap:8px;margin-top:8px}
+  .chatInput{flex:1;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.18);color:inherit}
 
-  /* Crash / success visual */
-  .big-flash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
-  .flash-circle{width:220px;height:220px;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0.04), rgba(255,255,255,0));transform:scale(0);opacity:0}
-  .flash-show{animation:flashIn .6s forwards}
-  @keyframes flashIn{to{transform:scale(1);opacity:1}}
+  .signals {margin-top:8px;padding:10px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.008));border:1px solid rgba(255,255,255,0.03);max-height:180px;overflow:auto}
+  .signalRow{display:flex;justify-content:space-between;padding:8px;border-bottom:1px dashed rgba(255,255,255,0.03);font-weight:700}
+  .signalBtn{padding:8px 10px;border-radius:8px;border:none;background:rgba(255,255,255,0.02);color:var(--muted);cursor:pointer}
+
+  /* plane animation */
+  .planeWrap{position:relative;height:36px;overflow:hidden;margin-top:8px}
+  .plane{position:absolute;left:-10%;top:50%;transform:translateY(-50%);width:140px;opacity:0;transition:transform 1.6s linear, opacity 0.3s}
+  .plane.show{left:110%;opacity:1}
+
+  /* flash big */
+  .flash{position:fixed;inset:0;pointer-events:none;display:flex;align-items:center;justify-content:center}
+  .flashCircle{width:280px;height:280px;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0.03), rgba(255,255,255,0));transform:scale(0);opacity:0}
+  .flashOn{animation:flashIn .5s forwards}
+  @keyframes flashIn{to{transform:scale(1);opacity:1;}}
+  
+  /* responsive tweaks */
+  @media (max-width:600px){
+    .mult{font-size:54px}
+    .graphCard{height:120px}
+  }
 </style>
 </head>
 <body>
+  <header>
+    <h1>🎯 Aviator — Simulador Premium (Fictício)</h1>
+    <div class="small-muted">Somente entretenimento — não é aposta real</div>
+  </header>
 
-<header>
-  <h1>🎯 Aviator — Simulador Fictício</h1>
-  <div>
-    <button id="themeToggle" class="theme-btn">🌙 Tema</button>
+  <div class="container">
+    <!-- MAIN -->
+    <section class="panel">
+      <div class="top">
+        <div class="leftMain">
+          <div id="multiplier" class="mult">—</div>
+          <div class="mult-mini">Multiplicador atual</div>
+
+          <div class="planeWrap" aria-hidden="true">
+            <!-- simple plane SVG -->
+            <svg id="plane" class="plane" viewBox="0 0 64 24" xmlns="http://www.w3.org/2000/svg" fill="none">
+              <path d="M2 12 L58 12" stroke="#9fb3c8" stroke-width="1.2" stroke-linecap="round" opacity="0.4"/>
+              <g transform="translate(0,0)" fill="#9fb3c8">
+                <path d="M8 5 L20 12 L8 19 L8 14 L2 12 L8 10 Z" opacity="0.95"/>
+                <rect x="20" y="11" width="30" height="2" rx="1" fill="#9fb3c8" opacity="0.9"/>
+              </g>
+            </svg>
+          </div>
+
+          <div class="controls">
+            <div class="betRow">
+              <input id="betAmount" class="betInput" type="number" min="30" value="30" />
+            </div>
+            <div>
+              <div class="note small-muted" style="text-align:center">Aposta mínima <strong>30 MZN</strong></div>
+            </div>
+          </div>
+
+          <div class="controls" style="margin-top:8px">
+            <button id="placeBtn" class="btn primary">Colocar Aposta</button>
+            <button id="getSignal" class="btn ghost">Receber Sinal</button>
+            <button id="cashoutBtn" class="btn ghost" disabled>Cashout</button>
+          </div>
+
+          <div class="statusRow">
+            <div class="pill" id="phase">Fase: aguardando</div>
+            <div class="pill" id="next">Próxima em: --s</div>
+            <div class="pill" id="players">👥 -- online</div>
+          </div>
+
+        </div>
+
+        <div class="graphCard">
+          <canvas id="graph" width="420" height="160"></canvas>
+        </div>
+      </div>
+
+      <div style="margin-top:12px" class="small-muted" id="note">
+        Use "Receber Sinal" para mostrar um coeficiente sugerido — é apenas fictício e informativo.
+      </div>
+    </section>
+
+    <!-- ASIDE: chat + signals -->
+    <aside class="aside">
+      <div class="panel" style="padding:12px">
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <strong>Chat ao vivo (anônimo)</strong>
+          <div class="small-muted">Fakes & jogadores</div>
+        </div>
+        <div id="chat" class="chatBox" role="log" aria-live="polite"></div>
+
+        <div class="chatForm">
+          <input id="chatInput" class="chatInput" placeholder="Mensagem anônima — ex.: 'Cashout 3.2x!'" />
+          <button id="sendMsg" class="btn primary">Enviar</button>
+        </div>
+      </div>
+
+      <div class="panel">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:8px">
+          <strong>Sinais</strong>
+          <div class="small-muted">Últimos</div>
+        </div>
+        <div id="signals" class="signals"></div>
+      </div>
+    </aside>
   </div>
-</header>
 
-<main class="wrap">
-  <!-- Left: Visual + Controls -->
-  <section class="panel">
-    <div class="top-row">
-      <div class="multibox">
-        <div id="multiplier" class="multiplier">—</div>
-        <div class="sub-muted">Multiplicador atual</div>
-      </div>
-
-      <div style="display:flex;flex-direction:column;gap:8px;align-items:center;">
-        <div class="graph-wrap">
-          <canvas id="graph" width="320" height="110"></canvas>
-        </div>
-        <div class="sub-muted" style="margin-top:6px">Visualização da curva (simulada)</div>
-      </div>
-    </div>
-
-    <div class="controls">
-      <div style="display:flex;flex-direction:column;align-items:center">
-        <div class="note">Aposta mínima: <strong>30 MZN</strong></div>
-        <div class="bet-row">
-          <input id="betAmount" class="bet-input" type="number" min="30" value="30" />
-        </div>
-        <div class="note">Coloque aposta antes do início da rodada</div>
-      </div>
-    </div>
-
-    <div class="controls">
-      <button id="placeBtn" class="btn btn-primary">Colocar Aposta</button>
-      <button id="cashoutBtn" class="btn btn-ghost" disabled>Cashout</button>
-      <button id="forceBtn" class="btn btn-danger" title="Gerar sinal / rodar" style="display:none">Forçar rodada</button>
-    </div>
-
-    <div class="status" aria-live="polite">
-      <div class="pill" id="phase">Fase: aguardando</div>
-      <div class="pill" id="roundTime">Próxima em: --s</div>
-      <div class="pill" id="playersFake">👥 -- online</div>
-    </div>
-
-    <div class="small" style="margin-top:10px">
-      ⚠️ Simulação/entretenimento — Sem dinheiro real. Não há garantias.
-    </div>
-  </section>
-
-  <!-- Right: Chat -->
-  <aside class="panel">
-    <div class="chat-title">
-      <strong>Chat ao vivo (anônimo)</strong>
-      <div style="color:var(--muted);font-size:13px">Fakes &amp; jogadores</div>
-    </div>
-
-    <div id="chat" class="chat-box" aria-live="polite"></div>
-
-    <div class="chat-form" style="margin-top:10px">
-      <input id="chatInput" class="chat-input" placeholder="Mensagem (anônima) — ex.: 'Ganhei 90 MZN!'" />
-      <button id="sendChat" class="btn btn-primary">Enviar</button>
-    </div>
-
-    <div class="small">Mensagens são apenas locais / fictícias.</div>
-  </aside>
-</main>
-
-<!-- Flash when crash/cashout -->
-<div id="flash" class="big-flash" aria-hidden="true">
-  <div id="flashCircle" class="flash-circle"></div>
-</div>
+  <div id="flash" class="flash"><div id="flashCircle" class="flashCircle"></div></div>
 
 <script>
-/*
-Aviator-sim (fictício)
-- rounds: pre-round (countdown), round (multiplier rises), crash (random)
-- player can place bet (min 30) during pre-round
-- player can cashout during round
-- fake chat messages + fake online counter
-- visually animated multiplier + simple canvas curve
-*/
+/* ----------------------------
+   SIMULADOR AVIATOR (FICTÍCIO)
+   - Round engine (pre -> run -> crash)
+   - "Receber Sinal" sugere coeficiente (fake)
+   - Plane sound & takeoff animation on signal
+   - Chat com fake users; usuário pode enviar anônimos
+   - Min bet 30 MZN
+   ---------------------------- */
 
 const MIN_BET = 30;
 let state = {
   phase: 'waiting', // waiting / pre / running / crashed
-  preTime: 6,       // seconds to place bets
-  runInterval: null,
-  roundTimer: 0,
-  multiplier: 1.00,
-  crashAt: null,
+  preTime: 6,
+  preLeft: 6,
+  players: 0,
+  multiplier: 1,
+  crashAt: 0,
   betPlaced: false,
   betAmount: 0,
-  hasCashedOut: false,
-  players: 0
+  cashed: false,
+  signalSuggested: null
 };
 
 const multiplierEl = document.getElementById('multiplier');
 const phaseEl = document.getElementById('phase');
-const roundTimeEl = document.getElementById('roundTime');
-const playersEl = document.getElementById('playersFake');
+const nextEl = document.getElementById('next');
+const playersEl = document.getElementById('players');
 const betInput = document.getElementById('betAmount');
 const placeBtn = document.getElementById('placeBtn');
+const getSignalBtn = document.getElementById('getSignal');
 const cashoutBtn = document.getElementById('cashoutBtn');
 const chatBox = document.getElementById('chat');
-const sendChat = document.getElementById('sendChat');
+const sendMsgBtn = document.getElementById('sendMsg');
 const chatInput = document.getElementById('chatInput');
+const signalsEl = document.getElementById('signals');
+const plane = document.getElementById('plane');
 const flash = document.getElementById('flash');
 const flashCircle = document.getElementById('flashCircle');
 
 const canvas = document.getElementById('graph');
 const ctx = canvas.getContext('2d');
 
-function rnd(min,max){return Math.random()*(max-min)+min}
-function nice(n){ return (Math.round(n*100)/100).toFixed(2) + 'x'; }
+/* WebAudio simple engine and whoosh */
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+const audioCtx = AudioCtx ? new AudioCtx() : null;
 
-function setPhase(p){
-  state.phase = p;
-  phaseEl.textContent = 'Fase: ' + (p === 'pre' ? 'apostando' : p === 'running' ? 'rodando' : p === 'crashed' ? 'crash' : 'aguardando');
+function playPlaneWhoosh(){
+  if(!audioCtx) return;
+  const now = audioCtx.currentTime;
+  // noise (whoosh)
+  const bufferSize = audioCtx.sampleRate * 0.5;
+  const noiseBuffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+  let data = noiseBuffer.getChannelData(0);
+  for(let i=0;i<bufferSize;i++) data[i] = (Math.random()*2-1) * (1 - i/bufferSize);
+  const noise = audioCtx.createBufferSource();
+  noise.buffer = noiseBuffer;
+  const noiseFilter = audioCtx.createBiquadFilter();
+  noiseFilter.type = 'lowpass';
+  noiseFilter.frequency.setValueAtTime(1000, now);
+  noise.connect(noiseFilter);
+  noiseFilter.connect(audioCtx.destination);
+  noise.start(now);
+  noise.stop(now + 0.5);
+
+  // low rumble (engine)
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(80, now);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.linearRampToValueAtTime(0.08, now + 0.05);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+  osc.connect(gain);
+  gain.connect(audioCtx.destination);
+  osc.start(now);
+  osc.stop(now + 0.95);
 }
 
+/* plane animation */
+function flyPlane(){
+  plane.classList.remove('show');
+  void plane.offsetWidth;
+  plane.classList.add('show');
+  setTimeout(()=> plane.classList.remove('show'), 1600);
+}
+
+/* UI helpers */
+function setPhase(p){
+  state.phase = p;
+  phaseEl.textContent = 'Fase: ' + (p === 'pre' ? 'Apostando' : p === 'running' ? 'Rodando' : p === 'crashed' ? 'Crash' : 'Aguardando');
+}
 function updatePlayers(){
-  state.players = Math.floor(rnd(30, 220));
+  state.players = Math.floor(Math.random()*220 + 40);
   playersEl.textContent = '👥 ' + state.players + ' online';
 }
 setInterval(updatePlayers, 3000);
 updatePlayers();
 
-// Chat (fake messages generator)
-const fakeMessages = [
-  "Ganhei 120 MZN! 🎉",
-  "Perdi tudo, crashou cedo 😅",
-  "Cashout em 2.50x — bom lucro",
-  "Alguém tá usando estratégia martingale?",
-  "30 MZN virou 150 MZN ✅",
-  "Virei a noite jogando, sensacional!",
-  "Cravou em 1.20x, perdi essa",
-  "Vou aumentar pra 60 agora",
-  "Alguém me dá dica de cashout?",
-  "Que rodada linda, 5.00x!"
+/* Chat: fake users */
+const fakeMsgs = [
+  "Ganhei 120 MZN! 🔥",
+  "Crash cedo, perdi 30 MZN",
+  "Cashout 2.5x — lucro!",
+  "Alguém pegou 4x agora?",
+  "Vou colocar 60 MZN nessa",
+  "Que rodada linda, 5.2x",
+  "Perdi a vez, cravou 1.11x",
+  "Sinal bom, segui e ganhei"
 ];
-
-function pushChat(name, text, cls=''){
+function pushChat(who, text, cls=''){
   const el = document.createElement('div');
-  el.className = 'msg ' + (cls||'');
-  const who = document.createElement('div');
-  who.className = 'who';
-  who.textContent = name;
-  const body = document.createElement('div');
-  body.className = 'body';
-  body.textContent = text;
-  el.appendChild(who);
-  el.appendChild(body);
+  el.className = 'chatMsg ' + (cls || '');
+  el.innerHTML = `<div class="chatWho">${who}</div><div class="chatText">${text}</div>`;
   chatBox.appendChild(el);
   chatBox.scrollTop = chatBox.scrollHeight;
 }
-
-// Generate fake chat periodically
 function spawnFakeChat(){
-  const id = 'User' + Math.floor(rnd(1000,9999));
-  const text = fakeMessages[Math.floor(Math.random() * fakeMessages.length)];
-  const cls = text.toLowerCase().includes('ganhei') || text.includes('✅') ? 'win' : (text.toLowerCase().includes('perdi')?'lose':'');
+  const id = 'User' + Math.floor(Math.random()*9000+1000);
+  const text = fakeMsgs[Math.floor(Math.random()*fakeMsgs.length)];
+  const cls = /ganhei|lucro|cashout|pegou|linda/i.test(text) ? 'chatWin' : (/perdi|cravou|perde/i.test(text) ? 'chatLose' : '');
   pushChat(id, text, cls);
 }
-setInterval(spawnFakeChat, 3500);
+setInterval(spawnFakeChat, 2800);
 spawnFakeChat();
 
-// Allow user to send anonymous chat
-sendChat.addEventListener('click', ()=>{
+/* user chat send */
+sendMsgBtn.addEventListener('click', ()=> {
   const txt = chatInput.value.trim();
   if(!txt) return;
-  pushChat('Anon', txt);
+  pushChat('Anon', txt, /ganhei|lucro|cashout|pegou|linda/i.test(txt) ? 'chatWin':'');
   chatInput.value = '';
 });
 
-// Bet logic
+/* Signals list */
+function addSignalToList(coef){
+  const row = document.createElement('div');
+  row.className = 'signalRow';
+  row.innerHTML = `<div>${new Date().toLocaleTimeString()}</div><div style="color:var(--accent)">${coef}x</div>`;
+  signalsEl.prepend(row);
+  // keep max 12
+  while(signalsEl.children.length > 12) signalsEl.removeChild(signalsEl.lastChild);
+}
+
+/* "Receber Sinal" - fake suggested coefficient + plane sound + chat mention */
+getSignalBtn.addEventListener('click', ()=>{
+  // suggestion between 1.20 and 6.00 biased to lower
+  let raw = Math.pow(Math.random(), 1.4) * 5.5 + 1.1;
+  raw = Math.max(1.1, Math.min(raw, 12));
+  const coef = raw.toFixed(2);
+  // show visual highlight on multiplier temporarily
+  multiplierEl.textContent = coef + 'x';
+  multiplierEl.style.transform = 'scale(1.25)';
+  multiplierEl.style.transition = 'transform .25s';
+  setTimeout(()=> multiplierEl.style.transform = '', 250);
+  // add to signals
+  addSignalToList(coef);
+  // fake announcement in chat
+  pushChat('SinalBot', `Sinal sugerido: ${coef}x — apenas indicativo`, '');
+  // plane sound & fly
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  playPlaneWhoosh();
+  flyPlane();
+});
+
+/* Betting / round engine (simplified) */
 placeBtn.addEventListener('click', ()=>{
   const val = Number(betInput.value);
   if(isNaN(val) || val < MIN_BET){
@@ -253,202 +337,197 @@ placeBtn.addEventListener('click', ()=>{
     return;
   }
   if(state.phase !== 'pre'){
-    alert('Só é possível apostar durante a fase de apostas (pré-rodada).');
+    alert('Você só pode apostar na fase de apostas (pré-rodada).');
     return;
   }
-  state.betPlaced = true;
-  state.betAmount = val;
-  state.hasCashedOut = false;
-  pushChat('Você', `Colocou ${val} MZN na rodada`, 'win');
+  state.betPlaced = true; state.betAmount = val; state.cashed = false;
+  pushChat('Você', `Colocou ${val} MZN na próxima rodada`, 'chatWin');
 });
 
-// Cashout
+/* cashout */
 cashoutBtn.addEventListener('click', ()=>{
-  if(state.phase !== 'running') return;
-  if(!state.betPlaced || state.hasCashedOut) return;
+  if(state.phase !== 'running' || !state.betPlaced || state.cashed) return;
   const payout = (state.betAmount * state.multiplier).toFixed(2);
-  state.hasCashedOut = true;
-  pushChat('Você', `Cashout em ${state.multiplier.toFixed(2)}x → Recebeu ${payout} MZN`, 'win');
-  flashSuccess();
+  state.cashed = true;
   cashoutBtn.disabled = true;
+  pushChat('Você', `Cashout em ${state.multiplier.toFixed(2)}x — Recebeu ${payout} MZN`, 'chatWin');
+  flashPulse('#7ef59c');
 });
 
-// Flash visual
-function flashSuccess(color='#7ef59c'){
+/* Flash visual on cashout/crash */
+function flashPulse(color='#7ef59c'){
   flashCircle.style.background = `radial-gradient(circle, ${color}, rgba(0,0,0,0))`;
-  flash.classList.add('flash-show');
-  setTimeout(()=>{ flash.classList.remove('flash-show') }, 600);
+  flashCircle.classList.add('flashOn');
+  setTimeout(()=> flashCircle.classList.remove('flashOn'), 600);
 }
 
-// Round engine
-let preTimer = null;
-function startPreRound(){
-  setPhase('pre');
-  state.multiplier = 1.00;
-  multiplierEl.textContent = nice(state.multiplier);
-  roundTimeEl.textContent = 'Próxima em: ' + state.preTime + 's';
-  let t = state.preTime;
-  if(preTimer) clearInterval(preTimer);
-  preTimer = setInterval(()=>{
-    t--;
-    roundTimeEl.textContent = 'Próxima em: ' + t + 's';
-    if(t <= 0){
-      clearInterval(preTimer);
-      beginRound();
-    }
-  },1000);
-}
-
-let roundAnim = null;
-let roundStart = null;
-
-function beginRound(){
-  setPhase('running');
-  state.crashAt = Math.max(1.1, rnd(1.1, 10) * (Math.random() < 0.12 ? 0.6 : 1)); // random crash; some chance earlier
-  // make occasional long rounds
-  if(Math.random() < 0.06) state.crashAt *= rnd(1.5, 4);
-  state.roundTimer = 0;
-  roundStart = performance.now();
-  cashoutBtn.disabled = false;
-  // animate multiplier
-  const start = performance.now();
-  const speedFactor = rnd(0.8,1.4);
-  // for graph
-  graphData = [{x:0,y:1}];
-  cancelAnimationFrame(roundAnim);
-  function step(now){
-    const elapsed = (now - start) / 1000 * speedFactor;
-    // simple exponential-ish growth
-    state.multiplier = Math.max(1 + elapsed * 0.6, Math.pow(1.02, elapsed*30));
-    // draw graph
-    drawGraph();
-    multiplierEl.textContent = nice(state.multiplier);
-    // update small status
-    roundTimeEl.textContent = 'Rodando...';
-    // check crash
-    if(state.multiplier >= state.crashAt){
-      // crash
-      crashRound();
-      return;
-    }
-    roundAnim = requestAnimationFrame(step);
-  }
-  roundAnim = requestAnimationFrame(step);
-}
-
-function crashRound(){
-  setPhase('crashed');
-  // if had bet and not cashed out -> lose
-  if(state.betPlaced && !state.hasCashedOut){
-    pushChat('Sistema', `Crash em ${state.crashAt.toFixed(2)}x — sua aposta de ${state.betAmount} MZN perdeu.`, 'lose');
-    flashSuccess('#ff8b8b');
-  } else if(state.betPlaced && state.hasCashedOut){
-    // already cashed out handled in cashout handler
-  }
-  // reset for next round after short pause
-  cancelAnimationFrame(roundAnim);
-  multiplierEl.textContent = nice(state.crashAt);
-  cashoutBtn.disabled = true;
-  // show crash marker in graph
-  drawGraph(true);
-  setTimeout(()=>{
-    // reset bet flags
-    state.betPlaced = false;
-    state.betAmount = 0;
-    state.hasCashedOut = false;
-    startPreRound();
-  }, 2500);
-}
-
-/* GRAPH: simple line that follows multiplier growth */
-let graphData = [{x:0,y:1}];
-function drawGraph(crash=false){
-  const W = canvas.width, H = canvas.height;
+/* Graph engine */
+let graphPoints = [{x:0,y:1}];
+function drawGraph(highlightCrash=false){
+  const W = canvas.width = canvas.clientWidth * (window.devicePixelRatio || 1);
+  const H = canvas.height = canvas.clientHeight * (window.devicePixelRatio || 1);
   ctx.clearRect(0,0,W,H);
-  // background grid
-  ctx.fillStyle = 'rgba(255,255,255,0.01)';
-  ctx.fillRect(0,0,W,H);
-  // push current multiplier to graphData
-  const lastX = graphData.length ? graphData[graphData.length-1].x : 0;
-  const xStep = 6; // px per point
-  // scale multiplier to fit
-  graphData.push({x:lastX + xStep, y: Math.min(state.multiplier, 12)});
-  // trim
-  if(graphData.length * xStep > W) graphData.shift();
-  // compute maxY in view
-  let maxY = 2;
-  for(const p of graphData) if(p.y > maxY) maxY = p.y;
-  maxY = Math.max(maxY, 3);
+  // push current
+  const maxPoints = 80;
+  const scale = 1 + Math.log(Math.max(...graphPoints.map(p=>p.y), 1)) * 0.8;
   // draw line
   ctx.beginPath();
-  for(let i=0;i<graphData.length;i++){
-    const p = graphData[i];
-    const sx = (p.x / (graphData[graphData.length-1].x || 1)) * W;
-    const sy = H - ( (p.y / maxY) * (H - 10) ) - 5;
+  const startIdx = Math.max(0, graphPoints.length - maxPoints);
+  const view = graphPoints.slice(startIdx);
+  for(let i=0;i<view.length;i++){
+    const p = view[i];
+    const sx = (i / (view.length-1 || 1)) * W;
+    const sy = H - ( (Math.log(p.y+1) / Math.log(Math.max(...view.map(x=>x.y)+1) + 1)) * (H - 12) ) - 6;
     if(i===0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
   }
-  ctx.strokeStyle = 'rgba(46,240,166,0.9)';
-  ctx.lineWidth = 2.4;
+  ctx.strokeStyle = 'rgba(57,255,176,0.95)';
+  ctx.lineWidth = 2 * (window.devicePixelRatio || 1);
   ctx.stroke();
-  // fill under curve
-  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath();
+  // fill
+  ctx.lineTo(W, H); ctx.lineTo(0,H); ctx.closePath();
   const grad = ctx.createLinearGradient(0,0,0,H);
-  grad.addColorStop(0, 'rgba(46,240,166,0.08)');
-  grad.addColorStop(1, 'rgba(46,240,166,0.01)');
+  grad.addColorStop(0, 'rgba(57,255,176,0.08)');
+  grad.addColorStop(1, 'rgba(57,255,176,0.01)');
   ctx.fillStyle = grad;
   ctx.fill();
-  // draw crash point
-  if(crash){
-    ctx.fillStyle = 'rgba(255,120,120,0.14)';
+  // crash mark
+  if(highlightCrash){
+    ctx.fillStyle = 'rgba(255,120,120,0.12)';
     ctx.fillRect(W-6,0,6,H);
   }
 }
 
-// Initialize loop
+/* Round lifecycle: pre -> run -> crash -> pre */
+let preInterval = null, runRAF = null;
+function startPreRound(){
+  setPhase('pre');
+  state.preLeft = state.preTime;
+  nextEl.textContent = 'Próxima em: ' + state.preLeft + 's';
+  multiplierEl.textContent = '—';
+  cashoutBtn.disabled = true;
+  preInterval = setInterval(()=>{
+    state.preLeft--;
+    nextEl.textContent = 'Próxima em: ' + state.preLeft + 's';
+    if(state.preLeft <= 0){
+      clearInterval(preInterval);
+      beginRun();
+    }
+  },1000);
+}
+
+function beginRun(){
+  setPhase('running');
+  // decide crash (random distribution skewed towards low multipliers)
+  let r = Math.random();
+  // 10% chance of long round
+  if(r < 0.10) state.crashAt = Number((Math.random()*8 + 3).toFixed(2));
+  else state.crashAt = Number((Math.random()*3 + 1.05).toFixed(2));
+  // small chance of micro crash
+  if(Math.random() < 0.06) state.crashAt = Number((Math.random()*1.1 + 1.01).toFixed(2));
+
+  state.multiplier = 1.00;
+  let t0 = performance.now();
+  const speed = 0.0015 + Math.random()*0.0022;
+  cashoutBtn.disabled = false;
+  function step(now){
+    const dt = now - t0;
+    // exponential-ish growth
+    state.multiplier = Math.max(1 + dt * speed, Math.pow(1.02, dt * 0.012));
+    // push to graph
+    graphPoints.push({x: graphPoints.length, y: state.multiplier});
+    if(graphPoints.length > 400) graphPoints.shift();
+    multiplierEl.textContent = state.multiplier.toFixed(2) + 'x';
+    drawGraph(false);
+    // if crash
+    if(state.multiplier >= state.crashAt){
+      crashRound();
+      return;
+    }
+    runRAF = requestAnimationFrame(step);
+  }
+  runRAF = requestAnimationFrame(step);
+}
+
+function crashRound(){
+  setPhase('crashed');
+  // cancel animation
+  cancelAnimationFrame(runRAF);
+  cashoutBtn.disabled = true;
+  // if had bet and not cashed -> lose
+  if(state.betPlaced && !state.cashed){
+    pushChat('Sistema', `Crash em ${state.crashAt.toFixed(2)}x — sua aposta de ${state.betAmount} MZN perdeu.`, 'chatLose');
+    flashPulse('#ff8b8b');
+  }
+  multiplierEl.textContent = state.crashAt.toFixed(2) + 'x';
+  drawGraph(true);
+  // reset betting flags after pause
+  setTimeout(()=>{
+    state.betPlaced = false; state.betAmount = 0; state.cashed = false;
+    // prepare next
+    graphPoints = [{x:0,y:1}];
+    startPreRound();
+  }, 2200);
+}
+
+/* initial start */
 startPreRound();
 
-// Theme toggle (light/dark)
-const themeBtn = document.getElementById('themeToggle');
-let light = false;
-themeBtn.addEventListener('click', ()=>{
-  light = !light;
-  if(light){
-    document.documentElement.style.setProperty('--bg1', '#f5f8ff');
-    document.documentElement.style.setProperty('--bg2', '#eef6ff');
-    document.documentElement.style.setProperty('--card', 'rgba(0,0,0,0.03)');
-    document.documentElement.style.setProperty('--accent', '#0077ff');
-    document.documentElement.style.setProperty('--accent-2', '#00bcd4');
-    document.documentElement.style.setProperty('--muted', '#4b5563');
-    document.documentElement.style.setProperty('--text-color', '#071329');
-    themeBtn.textContent = '☀️ Claro';
-    // invert colors for multiplier
-    document.querySelectorAll('.multiplier').forEach(e=>e.style.color = 'var(--accent)');
-  } else {
-    document.documentElement.style.setProperty('--bg1', '#081428');
-    document.documentElement.style.setProperty('--bg2', '#07121f');
-    document.documentElement.style.setProperty('--card', 'rgba(255,255,255,0.04)');
-    document.documentElement.style.setProperty('--accent', '#2ef0a6');
-    document.documentElement.style.setProperty('--accent-2', '#5aa7ff');
-    document.documentElement.style.setProperty('--muted', '#9fb3c8');
-    document.documentElement.style.setProperty('--text-color', '#eaf6ff');
-    themeBtn.textContent = '🌙 Escuro';
+/* signals list initial */
+function seedSignals(){
+  for(let i=0;i<6;i++){
+    const c = (Math.random()*5 + 1).toFixed(2);
+    addSignalToList(c);
   }
-});
+}
+seedSignals();
 
-// make bet input enforce min 30
+/* enforce min bet */
 betInput.addEventListener('change', ()=>{
   const v = Number(betInput.value);
   if(isNaN(v) || v < MIN_BET) betInput.value = MIN_BET;
 });
 
-// slight UX: press Enter in chat sends
-chatInput.addEventListener('keydown', (e)=>{
-  if(e.key === 'Enter') sendChat.click();
-});
-</script>
+/* utility to add signal */
+function addSignalToList(coef){
+  const row = document.createElement('div');
+  row.className = 'signalRow';
+  row.innerHTML = `<div>${new Date().toLocaleTimeString()}</div><div style="color:var(--accent)">${coef}x</div>`;
+  signalsEl.prepend(row);
+  while(signalsEl.children.length > 12) signalsEl.removeChild(signalsEl.lastChild);
+}
 
+/* play small sound on cashout & crash */
+function playClick(){
+  if(!audioCtx) return;
+  const o = audioCtx.createOscillator();
+  const g = audioCtx.createGain();
+  o.type = 'sine';
+  o.frequency.setValueAtTime(550, audioCtx.currentTime);
+  g.gain.setValueAtTime(0.001, audioCtx.currentTime);
+  g.gain.exponentialRampToValueAtTime(0.18, audioCtx.currentTime + 0.02);
+  g.gain.exponentialRampToValueAtTime(0.0001, audioCtx.currentTime + 0.22);
+  o.connect(g); g.connect(audioCtx.destination);
+  o.start(); o.stop(audioCtx.currentTime + 0.24);
+}
+
+/* small UX: pressing Enter in chat sends */
+chatInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') sendMsgBtn.click(); });
+/* small UX: clicking multiplier focuses place input */
+multiplierEl.addEventListener('click', ()=> betInput.focus());
+
+/* Accessibility: resume audio on first user gesture (some browsers) */
+document.addEventListener('click', function resume() {
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  document.removeEventListener('click', resume);
+});
+
+/* initial graph draw */
+drawGraph(false);
+
+</script>
 </body>
 </html>
+
 
 
 
