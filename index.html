@@ -63,14 +63,115 @@
         font-size: 1.2em;
         margin-top: 15px;
         color: var(--accent-color, #00ff88);
+    }<!DOCTYPE html>
+<html lang="pt">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aviator - Sinais</title>
+<style>
+    :root {
+        --bg-gradient: linear-gradient(-45deg, #1a1a1a, #121212, #1e1e1e, #2a2a2a);
+        --text-color: white;
+        --card-bg: rgba(30, 30, 30, 0.9);
+        --accent-color: #00ff88;
+        --accent-hover: #00cc6e;
+        --sub-color: #ccc;
+    }
+    body {
+        font-family: Arial, sans-serif;
+        background: var(--bg-gradient);
+        background-size: 400% 400%;
+        animation: bgMove 12s ease infinite;
+        color: var(--text-color);
+        text-align: center;
+        padding: 20px;
+        transition: background 0.5s, color 0.5s;
+    }
+    @keyframes bgMove {
+        0% {background-position: 0% 50%;}
+        50% {background-position: 100% 50%;}
+        100% {background-position: 0% 50%;}
+    }
+    h1 {
+        color: var(--accent-color);
+        text-shadow: 0 0 10px var(--accent-color);
+    }
+    .card {
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 25px;
+        max-width: 320px;
+        margin: auto;
+        box-shadow: 0 0 20px rgba(0,0,0,0.6);
+        transition: background 0.3s;
+    }
+    .valor {
+        font-size: 3em;
+        font-weight: bold;
+        color: var(--accent-color);
+        text-shadow: 0 0 15px var(--accent-color);
+        transition: transform 0.3s, color 0.3s;
+    }
+    .flash {
+        animation: flashEffect 0.6s ease;
+    }
+    @keyframes flashEffect {
+        0% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.4); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
+    }
+    .sub {
+        font-size: 1.2em;
+        margin-top: 10px;
+        color: var(--sub-color);
+    }
+    button {
+        margin-top: 20px;
+        padding: 12px 25px;
+        font-size: 1.1em;
+        border: none;
+        border-radius: 8px;
+        background: var(--accent-color);
+        color: black;
+        cursor: pointer;
+        font-weight: bold;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        transition: background 0.3s, transform 0.1s;
+    }
+    button:hover {
+        background: var(--accent-hover);
+    }
+    button:active {
+        transform: scale(0.95);
+    }
+    #online {
+        font-size: 1.1em;
+        margin-top: 15px;
+        color: var(--accent-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+    .dot {
+        width: 10px;
+        height: 10px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        animation: blink 1s infinite;
+    }
+    @keyframes blink {
+        0%, 100% {opacity: 1;}
+        50% {opacity: 0.3;}
     }
     #themeToggle {
         position: absolute;
         top: 15px;
         right: 15px;
         background: none;
-        color: var(--text-color, white);
-        border: 1px solid var(--sub-color, #ccc);
+        color: var(--text-color);
+        border: 1px solid var(--sub-color);
         padding: 5px 10px;
         border-radius: 5px;
         cursor: pointer;
@@ -85,7 +186,7 @@
 <h1>🎯 Sinais Aviator</h1>
 
 <!-- Онлайн пользователей -->
-<div id="online">👥 Jogadores online: --</div>
+<div id="online"><div class="dot"></div> <span id="onlineText">Jogadores online: --</span></div>
 
 <!-- Виджет -->
 <div class="card">
@@ -97,20 +198,20 @@
 <script>
 let darkTheme = true;
 
-// Генерация сигнала с миганием
+// Генерация сигнала
 function gerarSinal() {
     let coef = (Math.random() * 4 + 1).toFixed(2);
     let coefElem = document.getElementById("coef");
     coefElem.textContent = coef + "x";
     coefElem.classList.remove("flash");
-    void coefElem.offsetWidth; // триггер перерисовки
+    void coefElem.offsetWidth;
     coefElem.classList.add("flash");
 }
 
 // Фейковый онлайн
 function atualizarOnline() {
-    let jogadores = Math.floor(Math.random() * 100) + 50; // от 50 до 150
-    document.getElementById("online").textContent = "👥 Jogadores online: " + jogadores;
+    let jogadores = Math.floor(Math.random() * 100) + 50;
+    document.getElementById("onlineText").textContent = "Jogadores online: " + jogadores;
 }
 setInterval(atualizarOnline, 3000);
 atualizarOnline();
@@ -119,17 +220,17 @@ atualizarOnline();
 document.getElementById("themeToggle").addEventListener("click", () => {
     darkTheme = !darkTheme;
     if (darkTheme) {
-        document.documentElement.style.setProperty("--bg-color", "#121212");
+        document.documentElement.style.setProperty("--bg-gradient", "linear-gradient(-45deg, #1a1a1a, #121212, #1e1e1e, #2a2a2a)");
         document.documentElement.style.setProperty("--text-color", "white");
-        document.documentElement.style.setProperty("--card-bg", "#1e1e1e");
+        document.documentElement.style.setProperty("--card-bg", "rgba(30, 30, 30, 0.9)");
         document.documentElement.style.setProperty("--accent-color", "#00ff88");
         document.documentElement.style.setProperty("--accent-hover", "#00cc6e");
         document.documentElement.style.setProperty("--sub-color", "#ccc");
         document.getElementById("themeToggle").textContent = "🌙 Tema escuro";
     } else {
-        document.documentElement.style.setProperty("--bg-color", "#f4f4f4");
+        document.documentElement.style.setProperty("--bg-gradient", "linear-gradient(-45deg, #e0e0e0, #f4f4f4, #ffffff, #dcdcdc)");
         document.documentElement.style.setProperty("--text-color", "#222");
-        document.documentElement.style.setProperty("--card-bg", "#fff");
+        document.documentElement.style.setProperty("--card-bg", "rgba(255, 255, 255, 0.9)");
         document.documentElement.style.setProperty("--accent-color", "#0077ff");
         document.documentElement.style.setProperty("--accent-hover", "#005fcc");
         document.documentElement.style.setProperty("--sub-color", "#555");
@@ -141,8 +242,5 @@ document.getElementById("themeToggle").addEventListener("click", () => {
 </body>
 </html>
 
-
-</body>
-</html>
 
 
