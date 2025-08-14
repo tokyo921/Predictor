@@ -1,246 +1,398 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="pt-BR">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aviator - Sinais</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Aviator — Simulador / Sinais (Fictício)</title>
 <style>
-    body {
-        font-family: Arial, sans-serif;
-        background: var(--bg-color, #121212);
-        color: var(--text-color, white);
-        text-align: center;
-        padding: 20px;
-        transition: background 0.3s, color 0.3s;
-    }
-    h1 {
-        color: var(--accent-color, #00ff88);
-    }
-    .card {
-        background: var(--card-bg, #1e1e1e);
-        border-radius: 12px;
-        padding: 20px;
-        max-width: 300px;
-        margin: auto;
-        box-shadow: 0 0 15px rgba(0,0,0,0.5);
-        transition: background 0.3s;
-    }
-    .valor {
-        font-size: 2.5em;
-        font-weight: bold;
-        color: var(--accent-color, #00ff88);
-        transition: transform 0.2s;
-    }
-    .flash {
-        animation: flashEffect 0.5s ease;
-    }
-    @keyframes flashEffect {
-        0% { color: white; transform: scale(1); }
-        50% { color: var(--accent-color, #00ff88); transform: scale(1.3); }
-        100% { color: var(--accent-color, #00ff88); transform: scale(1); }
-    }
-    .sub {
-        font-size: 1.2em;
-        margin-top: 10px;
-        color: var(--sub-color, #ccc);
-    }
-    button {
-        margin-top: 15px;
-        padding: 10px 20px;
-        font-size: 1em;
-        border: none;
-        border-radius: 8px;
-        background: var(--accent-color, #00ff88);
-        color: black;
-        cursor: pointer;
-        font-weight: bold;
-        transition: background 0.3s;
-    }
-    button:hover {
-        background: var(--accent-hover, #00cc6e);
-    }
-    #online {
-        font-size: 1.2em;
-        margin-top: 15px;
-        color: var(--accent-color, #00ff88);
-    }<!DOCTYPE html>
-<html lang="pt">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aviator - Sinais</title>
-<style>
-    :root {
-        --bg-gradient: linear-gradient(-45deg, #1a1a1a, #121212, #1e1e1e, #2a2a2a);
-        --text-color: white;
-        --card-bg: rgba(30, 30, 30, 0.9);
-        --accent-color: #00ff88;
-        --accent-hover: #00cc6e;
-        --sub-color: #ccc;
-    }
-    body {
-        font-family: Arial, sans-serif;
-        background: var(--bg-gradient);
-        background-size: 400% 400%;
-        animation: bgMove 12s ease infinite;
-        color: var(--text-color);
-        text-align: center;
-        padding: 20px;
-        transition: background 0.5s, color 0.5s;
-    }
-    @keyframes bgMove {
-        0% {background-position: 0% 50%;}
-        50% {background-position: 100% 50%;}
-        100% {background-position: 0% 50%;}
-    }
-    h1 {
-        color: var(--accent-color);
-        text-shadow: 0 0 10px var(--accent-color);
-    }
-    .card {
-        background: var(--card-bg);
-        border-radius: 16px;
-        padding: 25px;
-        max-width: 320px;
-        margin: auto;
-        box-shadow: 0 0 20px rgba(0,0,0,0.6);
-        transition: background 0.3s;
-    }
-    .valor {
-        font-size: 3em;
-        font-weight: bold;
-        color: var(--accent-color);
-        text-shadow: 0 0 15px var(--accent-color);
-        transition: transform 0.3s, color 0.3s;
-    }
-    .flash {
-        animation: flashEffect 0.6s ease;
-    }
-    @keyframes flashEffect {
-        0% { transform: scale(1); opacity: 0.5; }
-        50% { transform: scale(1.4); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-    .sub {
-        font-size: 1.2em;
-        margin-top: 10px;
-        color: var(--sub-color);
-    }
-    button {
-        margin-top: 20px;
-        padding: 12px 25px;
-        font-size: 1.1em;
-        border: none;
-        border-radius: 8px;
-        background: var(--accent-color);
-        color: black;
-        cursor: pointer;
-        font-weight: bold;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        transition: background 0.3s, transform 0.1s;
-    }
-    button:hover {
-        background: var(--accent-hover);
-    }
-    button:active {
-        transform: scale(0.95);
-    }
-    #online {
-        font-size: 1.1em;
-        margin-top: 15px;
-        color: var(--accent-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-    }
-    .dot {
-        width: 10px;
-        height: 10px;
-        background: var(--accent-color);
-        border-radius: 50%;
-        animation: blink 1s infinite;
-    }
-    @keyframes blink {
-        0%, 100% {opacity: 1;}
-        50% {opacity: 0.3;}
-    }
-    #themeToggle {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: none;
-        color: var(--text-color);
-        border: 1px solid var(--sub-color);
-        padding: 5px 10px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+  :root{
+    --bg1: #081428;
+    --bg2: #07121f;
+    --card: rgba(255,255,255,0.04);
+    --accent: #2ef0a6;
+    --accent-2: #5aa7ff;
+    --muted: #9fb3c8;
+    --danger: #ff6b6b;
+    --glass: rgba(255,255,255,0.04);
+    --font-sans: Inter, ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, "Helvetica Neue", Arial;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:var(--font-sans);background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#eaf6ff}
+  .wrap{max-width:1100px;margin:20px auto;padding:18px;display:grid;grid-template-columns: 2fr 1fr;gap:18px}
+  @media (max-width:920px){ .wrap{grid-template-columns:1fr} }
+
+  /* Header */
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  header h1{font-size:20px;margin:0;letter-spacing:0.4px}
+  .theme-btn{background:transparent;border:1px solid rgba(255,255,255,0.08);padding:8px 10px;border-radius:8px;color:var(--muted);cursor:pointer}
+
+  /* Left panel (main game) */
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));border:1px solid rgba(255,255,255,0.04);border-radius:14px;padding:16px;backdrop-filter:blur(6px)}
+  .top-row{display:flex;gap:12px;align-items:center;justify-content:space-between}
+  .multibox{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:18px;border-radius:12px;background:linear-gradient(180deg, rgba(0,0,0,0.18), rgba(255,255,255,0.01));box-shadow:inset 0 0 30px rgba(0,0,0,0.4)}
+  .multiplier{font-size:64px;font-weight:800;letter-spacing:0.02em;color:var(--accent);text-shadow:0 8px 30px rgba(46,240,166,0.12)}
+  .sub-muted{color:var(--muted);font-size:13px;margin-top:6px}
+  .graph-wrap{width:320px;height:110px;border-radius:8px;padding:6px;background:linear-gradient(180deg, rgba(255,255,255,0.007), rgba(255,255,255,0.01));display:flex;align-items:center;justify-content:center}
+  .controls{display:flex;gap:10px;margin-top:14px;flex-wrap:wrap;justify-content:center}
+  button.btn{padding:10px 18px;border-radius:10px;border:none;cursor:pointer;font-weight:700}
+  .btn-primary{background:linear-gradient(90deg,var(--accent),var(--accent-2));color:#03111a;box-shadow:0 8px 30px rgba(46,240,166,0.08)}
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.06);color:var(--muted)}
+  .btn-danger{background:linear-gradient(90deg,#ff7b7b,#ff5252);color:#2b0a0a}
+
+  /* Bet area */
+  .bet-row{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px}
+  .bet-input{width:120px;padding:10px;border-radius:10px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.25);color:inherit;text-align:center;font-weight:700}
+  .note{font-size:12px;color:var(--muted);margin-top:8px;text-align:center}
+
+  /* Status bar */
+  .status{display:flex;gap:12px;align-items:center;justify-content:center;margin-top:12px;color:var(--muted);font-size:13px}
+  .pill{background:rgba(255,255,255,0.02);padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.03)}
+
+  /* Right panel (chat + info) */
+  .chat-title{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  .chat-box{height:460px;overflow:auto;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.012), rgba(255,255,255,0.008));border:1px solid rgba(255,255,255,0.03)}
+  .msg{margin-bottom:10px;padding:8px;border-radius:8px;background:rgba(0,0,0,0.16);border:1px solid rgba(255,255,255,0.02)}
+  .msg .who{font-weight:700;color:var(--accent-2);font-size:13px;margin-bottom:4px}
+  .msg.win{border-left:4px solid #7ef59c}
+  .msg.lose{border-left:4px solid #ff8b8b}
+  .chat-form{display:flex;gap:8px;margin-top:8px}
+  .chat-input{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.06);background:rgba(0,0,0,0.2);color:inherit}
+  .small{font-size:12px;color:var(--muted);text-align:center;margin-top:8px}
+
+  /* Crash / success visual */
+  .big-flash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .flash-circle{width:220px;height:220px;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0.04), rgba(255,255,255,0));transform:scale(0);opacity:0}
+  .flash-show{animation:flashIn .6s forwards}
+  @keyframes flashIn{to{transform:scale(1);opacity:1}}
 </style>
 </head>
 <body>
 
-<!-- Переключатель темы -->
-<button id="themeToggle">🌙 Tema escuro</button>
+<header>
+  <h1>🎯 Aviator — Simulador Fictício</h1>
+  <div>
+    <button id="themeToggle" class="theme-btn">🌙 Tema</button>
+  </div>
+</header>
 
-<h1>🎯 Sinais Aviator</h1>
+<main class="wrap">
+  <!-- Left: Visual + Controls -->
+  <section class="panel">
+    <div class="top-row">
+      <div class="multibox">
+        <div id="multiplier" class="multiplier">—</div>
+        <div class="sub-muted">Multiplicador atual</div>
+      </div>
 
-<!-- Онлайн пользователей -->
-<div id="online"><div class="dot"></div> <span id="onlineText">Jogadores online: --</span></div>
+      <div style="display:flex;flex-direction:column;gap:8px;align-items:center;">
+        <div class="graph-wrap">
+          <canvas id="graph" width="320" height="110"></canvas>
+        </div>
+        <div class="sub-muted" style="margin-top:6px">Visualização da curva (simulada)</div>
+      </div>
+    </div>
 
-<!-- Виджет -->
-<div class="card">
-    <div class="valor" id="coef">--</div>
-    <div class="sub">Coeficiente</div>
-    <button onclick="gerarSinal()">Gerar Sinal</button>
+    <div class="controls">
+      <div style="display:flex;flex-direction:column;align-items:center">
+        <div class="note">Aposta mínima: <strong>30 MZN</strong></div>
+        <div class="bet-row">
+          <input id="betAmount" class="bet-input" type="number" min="30" value="30" />
+        </div>
+        <div class="note">Coloque aposta antes do início da rodada</div>
+      </div>
+    </div>
+
+    <div class="controls">
+      <button id="placeBtn" class="btn btn-primary">Colocar Aposta</button>
+      <button id="cashoutBtn" class="btn btn-ghost" disabled>Cashout</button>
+      <button id="forceBtn" class="btn btn-danger" title="Gerar sinal / rodar" style="display:none">Forçar rodada</button>
+    </div>
+
+    <div class="status" aria-live="polite">
+      <div class="pill" id="phase">Fase: aguardando</div>
+      <div class="pill" id="roundTime">Próxima em: --s</div>
+      <div class="pill" id="playersFake">👥 -- online</div>
+    </div>
+
+    <div class="small" style="margin-top:10px">
+      ⚠️ Simulação/entretenimento — Sem dinheiro real. Não há garantias.
+    </div>
+  </section>
+
+  <!-- Right: Chat -->
+  <aside class="panel">
+    <div class="chat-title">
+      <strong>Chat ao vivo (anônimo)</strong>
+      <div style="color:var(--muted);font-size:13px">Fakes &amp; jogadores</div>
+    </div>
+
+    <div id="chat" class="chat-box" aria-live="polite"></div>
+
+    <div class="chat-form" style="margin-top:10px">
+      <input id="chatInput" class="chat-input" placeholder="Mensagem (anônima) — ex.: 'Ganhei 90 MZN!'" />
+      <button id="sendChat" class="btn btn-primary">Enviar</button>
+    </div>
+
+    <div class="small">Mensagens são apenas locais / fictícias.</div>
+  </aside>
+</main>
+
+<!-- Flash when crash/cashout -->
+<div id="flash" class="big-flash" aria-hidden="true">
+  <div id="flashCircle" class="flash-circle"></div>
 </div>
 
 <script>
-let darkTheme = true;
+/*
+Aviator-sim (fictício)
+- rounds: pre-round (countdown), round (multiplier rises), crash (random)
+- player can place bet (min 30) during pre-round
+- player can cashout during round
+- fake chat messages + fake online counter
+- visually animated multiplier + simple canvas curve
+*/
 
-// Генерация сигнала
-function gerarSinal() {
-    let coef = (Math.random() * 4 + 1).toFixed(2);
-    let coefElem = document.getElementById("coef");
-    coefElem.textContent = coef + "x";
-    coefElem.classList.remove("flash");
-    void coefElem.offsetWidth;
-    coefElem.classList.add("flash");
+const MIN_BET = 30;
+let state = {
+  phase: 'waiting', // waiting / pre / running / crashed
+  preTime: 6,       // seconds to place bets
+  runInterval: null,
+  roundTimer: 0,
+  multiplier: 1.00,
+  crashAt: null,
+  betPlaced: false,
+  betAmount: 0,
+  hasCashedOut: false,
+  players: 0
+};
+
+const multiplierEl = document.getElementById('multiplier');
+const phaseEl = document.getElementById('phase');
+const roundTimeEl = document.getElementById('roundTime');
+const playersEl = document.getElementById('playersFake');
+const betInput = document.getElementById('betAmount');
+const placeBtn = document.getElementById('placeBtn');
+const cashoutBtn = document.getElementById('cashoutBtn');
+const chatBox = document.getElementById('chat');
+const sendChat = document.getElementById('sendChat');
+const chatInput = document.getElementById('chatInput');
+const flash = document.getElementById('flash');
+const flashCircle = document.getElementById('flashCircle');
+
+const canvas = document.getElementById('graph');
+const ctx = canvas.getContext('2d');
+
+function rnd(min,max){return Math.random()*(max-min)+min}
+function nice(n){ return (Math.round(n*100)/100).toFixed(2) + 'x'; }
+
+function setPhase(p){
+  state.phase = p;
+  phaseEl.textContent = 'Fase: ' + (p === 'pre' ? 'apostando' : p === 'running' ? 'rodando' : p === 'crashed' ? 'crash' : 'aguardando');
 }
 
-// Фейковый онлайн
-function atualizarOnline() {
-    let jogadores = Math.floor(Math.random() * 100) + 50;
-    document.getElementById("onlineText").textContent = "Jogadores online: " + jogadores;
+function updatePlayers(){
+  state.players = Math.floor(rnd(30, 220));
+  playersEl.textContent = '👥 ' + state.players + ' online';
 }
-setInterval(atualizarOnline, 3000);
-atualizarOnline();
+setInterval(updatePlayers, 3000);
+updatePlayers();
 
-// Переключение темы
-document.getElementById("themeToggle").addEventListener("click", () => {
-    darkTheme = !darkTheme;
-    if (darkTheme) {
-        document.documentElement.style.setProperty("--bg-gradient", "linear-gradient(-45deg, #1a1a1a, #121212, #1e1e1e, #2a2a2a)");
-        document.documentElement.style.setProperty("--text-color", "white");
-        document.documentElement.style.setProperty("--card-bg", "rgba(30, 30, 30, 0.9)");
-        document.documentElement.style.setProperty("--accent-color", "#00ff88");
-        document.documentElement.style.setProperty("--accent-hover", "#00cc6e");
-        document.documentElement.style.setProperty("--sub-color", "#ccc");
-        document.getElementById("themeToggle").textContent = "🌙 Tema escuro";
-    } else {
-        document.documentElement.style.setProperty("--bg-gradient", "linear-gradient(-45deg, #e0e0e0, #f4f4f4, #ffffff, #dcdcdc)");
-        document.documentElement.style.setProperty("--text-color", "#222");
-        document.documentElement.style.setProperty("--card-bg", "rgba(255, 255, 255, 0.9)");
-        document.documentElement.style.setProperty("--accent-color", "#0077ff");
-        document.documentElement.style.setProperty("--accent-hover", "#005fcc");
-        document.documentElement.style.setProperty("--sub-color", "#555");
-        document.getElementById("themeToggle").textContent = "☀️ Tema claro";
-    }
+// Chat (fake messages generator)
+const fakeMessages = [
+  "Ganhei 120 MZN! 🎉",
+  "Perdi tudo, crashou cedo 😅",
+  "Cashout em 2.50x — bom lucro",
+  "Alguém tá usando estratégia martingale?",
+  "30 MZN virou 150 MZN ✅",
+  "Virei a noite jogando, sensacional!",
+  "Cravou em 1.20x, perdi essa",
+  "Vou aumentar pra 60 agora",
+  "Alguém me dá dica de cashout?",
+  "Que rodada linda, 5.00x!"
+];
+
+function pushChat(name, text, cls=''){
+  const el = document.createElement('div');
+  el.className = 'msg ' + (cls||'');
+  const who = document.createElement('div');
+  who.className = 'who';
+  who.textContent = name;
+  const body = document.createElement('div');
+  body.className = 'body';
+  body.textContent = text;
+  el.appendChild(who);
+  el.appendChild(body);
+  chatBox.appendChild(el);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+// Generate fake chat periodically
+function spawnFakeChat(){
+  const id = 'User' + Math.floor(rnd(1000,9999));
+  const text = fakeMessages[Math.floor(Math.random() * fakeMessages.length)];
+  const cls = text.toLowerCase().includes('ganhei') || text.includes('✅') ? 'win' : (text.toLowerCase().includes('perdi')?'lose':'');
+  pushChat(id, text, cls);
+}
+setInterval(spawnFakeChat, 3500);
+spawnFakeChat();
+
+// Allow user to send anonymous chat
+sendChat.addEventListener('click', ()=>{
+  const txt = chatInput.value.trim();
+  if(!txt) return;
+  pushChat('Anon', txt);
+  chatInput.value = '';
 });
-</script>
 
-</body>
-</html>
+// Bet logic
+placeBtn.addEventListener('click', ()=>{
+  const val = Number(betInput.value);
+  if(isNaN(val) || val < MIN_BET){
+    alert('A aposta mínima é ' + MIN_BET + ' MZN');
+    betInput.value = MIN_BET;
+    return;
+  }
+  if(state.phase !== 'pre'){
+    alert('Só é possível apostar durante a fase de apostas (pré-rodada).');
+    return;
+  }
+  state.betPlaced = true;
+  state.betAmount = val;
+  state.hasCashedOut = false;
+  pushChat('Você', `Colocou ${val} MZN na rodada`, 'win');
+});
+
+// Cashout
+cashoutBtn.addEventListener('click', ()=>{
+  if(state.phase !== 'running') return;
+  if(!state.betPlaced || state.hasCashedOut) return;
+  const payout = (state.betAmount * state.multiplier).toFixed(2);
+  state.hasCashedOut = true;
+  pushChat('Você', `Cashout em ${state.multiplier.toFixed(2)}x → Recebeu ${payout} MZN`, 'win');
+  flashSuccess();
+  cashoutBtn.disabled = true;
+});
+
+// Flash visual
+function flashSuccess(color='#7ef59c'){
+  flashCircle.style.background = `radial-gradient(circle, ${color}, rgba(0,0,0,0))`;
+  flash.classList.add('flash-show');
+  setTimeout(()=>{ flash.classList.remove('flash-show') }, 600);
+}
+
+// Round engine
+let preTimer = null;
+function startPreRound(){
+  setPhase('pre');
+  state.multiplier = 1.00;
+  multiplierEl.textContent = nice(state.multiplier);
+  roundTimeEl.textContent = 'Próxima em: ' + state.preTime + 's';
+  let t = state.preTime;
+  if(preTimer) clearInterval(preTimer);
+  preTimer = setInterval(()=>{
+    t--;
+    roundTimeEl.textContent = 'Próxima em: ' + t + 's';
+    if(t <= 0){
+      clearInterval(preTimer);
+      beginRound();
+    }
+  },1000);
+}
+
+let roundAnim = null;
+let roundStart = null;
+
+function beginRound(){
+  setPhase('running');
+  state.crashAt = Math.max(1.1, rnd(1.1, 10) * (Math.random() < 0.12 ? 0.6 : 1)); // random crash; some chance earlier
+  // make occasional long rounds
+  if(Math.random() < 0.06) state.crashAt *= rnd(1.5, 4);
+  state.roundTimer = 0;
+  roundStart = performance.now();
+  cashoutBtn.disabled = false;
+  // animate multiplier
+  const start = performance.now();
+  const speedFactor = rnd(0.8,1.4);
+  // for graph
+  graphData = [{x:0,y:1}];
+  cancelAnimationFrame(roundAnim);
+  function step(now){
+    const elapsed = (now - start) / 1000 * speedFactor;
+    // simple exponential-ish growth
+    state.multiplier = Math.max(1 + elapsed * 0.6, Math.pow(1.02, elapsed*30));
+    // draw graph
+    drawGraph();
+    multiplierEl.textContent = nice(state.multiplier);
+    // update small status
+    roundTimeEl.textContent = 'Rodando...';
+    // check crash
+    if(state.multiplier >= state.crashAt){
+      // crash
+      crashRound();
+      return;
+    }
+    roundAnim = requestAnimationFrame(step);
+  }
+  roundAnim = requestAnimationFrame(step);
+}
+
+function crashRound(){
+  setPhase('crashed');
+  // if had bet and not cashed out -> lose
+  if(state.betPlaced && !state.hasCashedOut){
+    pushChat('Sistema', `Crash em ${state.crashAt.toFixed(2)}x — sua aposta de ${state.betAmount} MZN perdeu.`, 'lose');
+    flashSuccess('#ff8b8b');
+  } else if(state.betPlaced && state.hasCashedOut){
+    // already cashed out handled in cashout handler
+  }
+  // reset for next round after short pause
+  cancelAnimationFrame(roundAnim);
+  multiplierEl.textContent = nice(state.crashAt);
+  cashoutBtn.disabled = true;
+  // show crash marker in graph
+  drawGraph(true);
+  setTimeout(()=>{
+    // reset bet flags
+    state.betPlaced = false;
+    state.betAmount = 0;
+    state.hasCashedOut = false;
+    startPreRound();
+  }, 2500);
+}
+
+/* GRAPH: simple line that follows multiplier growth */
+let graphData = [{x:0,y:1}];
+function drawGraph(crash=false){
+  const W = canvas.width, H = canvas.height;
+  ctx.clearRect(0,0,W,H);
+  // background grid
+  ctx.fillStyle = 'rgba(255,255,255,0.01)';
+  ctx.fillRect(0,0,W,H);
+  // push current multiplier to graphData
+  const lastX = graphData.length ? graphData[graphData.length-1].x : 0;
+  const xStep = 6; // px per point
+  // scale multiplier to fit
+  graphData.push({x:lastX + xStep, y: Math.min(state.multiplier, 12)});
+  // trim
+  if(graphData.length * xStep > W) graphData.shift();
+  // compute maxY in view
+  let maxY = 2;
+  for(const p of graphData) if(p.y > maxY) maxY = p.y;
+  maxY = Math.max(maxY, 3);
+  // draw line
+  ctx.beginPath();
+  for(let i=0;i<graphData.length;i++){
+    const p = graphData[i];
+    const sx = (p.x / (graphData[graphData.length-1].x || 1)) * W;
+    const sy = H - ( (p.y / maxY) * (H - 10) ) - 5;
+    if(i===0) ctx.moveTo(sx, sy); else ctx.lineTo(sx, sy);
+  }
+  ctx.strokeStyle = 'rgba(46,240,166,0.9)';
+  ctx.lineWidth = 2.4;
+  ctx.stroke();
+  // fill under curve
+  ctx.lineTo(W, H); ctx.lineTo(0, H); ctx.closePath
+
 
 
 
