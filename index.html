@@ -10,37 +10,65 @@
         font-family: Arial, sans-serif;
         background: #121212;
         color: white;
-        display: flex;
-        height: 100vh;
+        text-align: center;
     }
-    /* Área principal */
-    .main {
-        flex: 3;
-        padding: 20px;
+    /* Экран загрузки */
+    #loading {
+        position: fixed;
+        top:0; left:0; width:100%; height:100%;
+        background: #121212;
         display: flex;
-        flex-direction: column;
+        justify-content: center;
         align-items: center;
-    }
-    h1 {
+        flex-direction: column;
+        z-index: 9999;
+        font-size: 1.5em;
         color: #00ff88;
-        margin-bottom: 10px;
     }
+    /* Ввод ID */
+    #login {
+        display: none;
+        margin-top: 50px;
+    }
+    #login input {
+        width: 200px;
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        text-align: center;
+        font-size: 1em;
+        margin-right: 10px;
+    }
+    #login button {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        background: #00ff88;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    /* Основной интерфейс */
+    #main {
+        display: none;
+        padding: 20px;
+    }
+    h1 { color: #00ff88; }
     .card {
         background: #1e1e1e;
         border-radius: 12px;
         padding: 20px;
-        width: 300px;
-        text-align: center;
+        max-width: 300px;
+        margin: 20px auto;
         box-shadow: 0 0 15px rgba(0,0,0,0.5);
     }
     .valor {
         font-size: 2.5em;
         font-weight: bold;
         color: #00ff88;
-        margin-bottom: 10px;
     }
-    button {
-        margin-top: 10px;
+    button.main-btn {
+        margin: 10px 0;
         padding: 10px 20px;
         font-size: 1em;
         border: none;
@@ -50,133 +78,112 @@
         cursor: pointer;
         font-weight: bold;
     }
-    button:hover {
-        background: #00cc6e;
-    }
-    #online {
-        font-size: 1.2em;
-        margin-top: 15px;
-        color: #00ff88;
-    }
-    /* Área do chat */
-    .chat {
-        flex: 1;
+    button.main-btn:hover { background: #00cc6e; }
+
+    /* Чат */
+    #chat-container {
+        max-width: 400px;
+        margin: 20px auto;
         background: #1e1e1e;
-        display: flex;
-        flex-direction: column;
-        border-left: 2px solid #00ff88;
-    }
-    .chat-messages {
-        flex: 1;
+        border-radius: 12px;
+        padding: 10px;
+        height: 250px;
         overflow-y: auto;
-        padding: 10px;
+        text-align: left;
     }
-    .message {
-        margin-bottom: 10px;
+    .chat-msg {
+        margin: 5px 0;
     }
-    .message strong {
+    .chat-msg span {
         color: #00ff88;
-    }
-    .chat-input {
-        display: flex;
-        border-top: 1px solid #333;
-    }
-    .chat-input input {
-        flex: 1;
-        padding: 10px;
-        border: none;
-        outline: none;
-        background: #121212;
-        color: white;
-    }
-    .chat-input button {
-        background: #00ff88;
-        border: none;
-        padding: 10px;
         font-weight: bold;
-        cursor: pointer;
     }
 </style>
 </head>
 <body>
 
-<div class="main">
+<div id="loading">🎮 Carregando...</div>
+
+<div id="login">
+    <h1>Digite seu ID 1xBet</h1>
+    <input type="text" id="userID" maxlength="10" placeholder="Somente números">
+    <button onclick="entrar()">Entrar</button>
+    <p id="erro" style="color:red;"></p>
+</div>
+
+<div id="main">
     <h1>🎯 Bot de Sinais Aviator</h1>
-    <div id="online">👥 Jogadores online: --</div>
     <div class="card">
         <div class="valor" id="coef">--</div>
-        <button onclick="gerarSinal()">Gerar Sinal</button>
+        <button class="main-btn" onclick="gerarSinal()">Obter Sinal ✈️</button>
     </div>
+    
+    <button class="main-btn" onclick="toggleChat()">Abrir Chat</button>
+    
+    <div id="chat-container" style="display:none;"></div>
 </div>
-
-<div class="chat">
-    <div class="chat-messages" id="chatMessages"></div>
-    <div class="chat-input">
-        <input type="text" id="userMessage" placeholder="Escreva uma mensagem...">
-        <button onclick="sendMessage()">Enviar</button>
-    </div>
-</div>
-
-<audio id="planeSound" src="https://www.soundjay.com/transportation/sounds/airplane-fly-over-01.mp3"></audio>
 
 <script>
-let userID = prompt("Digite seu ID do 1xBet:");
-if (!userID) userID = "Anônimo_" + Math.floor(Math.random()*1000);
+// Экран загрузки
+setTimeout(() => {
+    document.getElementById('loading').style.display = 'none';
+    document.getElementById('login').style.display = 'block';
+}, 2000);
 
-// Atualização de jogadores online
-function atualizarOnline() {
-    let jogadores = Math.floor(Math.random() * 50) + 50;
-    document.getElementById("online").textContent = "👥 Jogadores online: " + jogadores;
-}
-setInterval(atualizarOnline, 3000);
-atualizarOnline();
-
-// Gerar sinal
-function gerarSinal() {
-    let coef = (Math.random() * 4 + 1).toFixed(2) + "x";
-    document.getElementById("coef").textContent = coef;
-    document.getElementById("planeSound").play();
-    addMessage("Sistema", "Novo sinal gerado: " + coef);
-}
-
-// Chat
-const chatMessages = document.getElementById("chatMessages");
-function addMessage(user, text) {
-    const msg = document.createElement("div");
-    msg.classList.add("message");
-    msg.innerHTML = `<strong>${user}:</strong> ${text}`;
-    chatMessages.appendChild(msg);
-    chatMessages.scrollTop = chatMessages.scrollHeight;
-}
-
-// Enviar mensagem manual
-function sendMessage() {
-    const input = document.getElementById("userMessage");
-    if (input.value.trim() !== "") {
-        addMessage(userID, input.value.trim());
-        input.value = "";
+// Вход по ID
+function entrar() {
+    const id = document.getElementById('userID').value;
+    const erro = document.getElementById('erro');
+    if(!/^\d{1,10}$/.test(id)){
+        erro.textContent = "ID inválido. Digite até 10 números.";
+        return;
     }
+    erro.textContent = "";
+    document.getElementById('login').style.display = 'none';
+    document.getElementById('main').style.display = 'block';
+    startChat();
 }
 
-// Mensagens automáticas fake
-const fakeUsers = ["Jogador_321", "Ana_Pro", "Carlos99", "MZ_Aposta", "Mano_Jogo"];
-const fakeTexts = [
-    "Funcionou para mim!",
-    "Qual será o próximo coeficiente?",
-    "Mano, quanto apostar agora?",
-    "Acabei de ganhar 🔥",
-    "Aposta de 50 MZN deu bom!"
-];
-function addFakeMessage() {
-    const user = fakeUsers[Math.floor(Math.random()*fakeUsers.length)];
-    const text = fakeTexts[Math.floor(Math.random()*fakeTexts.length)];
-    addMessage(user, text);
+// Генерация коэффициента
+function gerarSinal() {
+    let coef = (Math.random() * 4 + 1).toFixed(2);
+    document.getElementById('coef').textContent = coef + "x";
+    // Звук самолета
+    const audio = new Audio('https://actions.google.com/sounds/v1/transport/airplane_flyby.ogg');
+    audio.play();
 }
-setInterval(addFakeMessage, 4000);
+
+// Чат
+let chatOpen = false;
+let chatInterval = null;
+function toggleChat(){
+    const chat = document.getElementById('chat-container');
+    chatOpen = !chatOpen;
+    chat.style.display = chatOpen ? 'block' : 'none';
+}
+
+function startChat(){
+    const users = ["Carlos","Ana","Miguel","Fatima","Joao","Maria"];
+    const messages = ["Funcionou!","Qual será o próximo coef?","Quanto apostar?","Boa sorte!","Eu ganhei!","Atenção ao coef!"];
+    const chat = document.getElementById('chat-container');
+
+    chatInterval = setInterval(() => {
+        if(chatOpen){
+            const user = users[Math.floor(Math.random()*users.length)];
+            const msg = messages[Math.floor(Math.random()*messages.length)];
+            const div = document.createElement('div');
+            div.className = 'chat-msg';
+            div.innerHTML = `<span>${user}:</span> ${msg}`;
+            chat.appendChild(div);
+            chat.scrollTop = chat.scrollHeight;
+        }
+    }, 2000);
+}
 </script>
 
 </body>
 </html>
+
 
 
 
