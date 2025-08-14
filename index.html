@@ -1,11 +1,53 @@
-import time
-import random
-from datetime import datetime
+#!/usr/bin/env python3
+# -*- coding: utf-8 -*-
 
-# === Настройки ===
-base = 2.0          # ставка по умолчанию
-risco = "medio"     # baixo, medio, alto
-intervalo = 10      # пауза между сигналами (в секундах)
+"""
+🎯 Bot de Sinais para Aviator (fictício) — arquivo único
+========================================================
+⚠️ Aviso importante:
+Este programa é apenas para fins educacionais/entretenimento. O jogo Aviator
+tem resultados aleatórios; não existem previsões garantidas. Jogue com
+responsabilidade e nunca arrisque dinheiro que você não pode perder.
+
+Como usar (GitHub-ready):
+1) Salve este arquivo como `aviator_sinais_bot.py`
+2) Execute no terminal:
+   python aviator_sinais_bot.py
+3) Use o menu interativo (manual/automático/configurações/exportar CSV).
+
+Requisitos:
+- Python 3.8+ (nenhuma biblioteca externa)
+
+Funcionalidades:
+- Geração de sinais fictícios com base, risco e intervalo configuráveis
+- Modo manual (um sinal) e automático (sinais contínuos)
+- Contagem regressiva visual quando houver atraso de entrada
+- Exportação opcional dos sinais para CSV (histórico)
+- Idioma: Português (pt-BR)
+"""
+
+import csv
+import json
+import os
+import random
+import sys
+import time
+from datetime import datetime
+from typing import Dict, Any, List
+
+# ============================== Configurações & Persistência ==============================
+
+APP_NAME = "AviatorSinaisBot"
+CONFIG_ARQ = "config_sinais.json"
+HIST_ARQ = "historico_sinais.csv"
+
+DEFAULTS: Dict[str, Any] = {
+    "base": 2.0,         # valor base da aposta
+    "risco": "medio",    # baixo | medio | alto
+    "intervalo": 10,     # segundos entre sinais automáticos
+    "csv_auto": True,    # salvar automaticamente os sinais no CSV
+    "contagem": True     # mostrar contagem regressiva de entrada
+}
 
 RISK_MAP = {
     "baixo": 0.5,
@@ -13,42 +55,280 @@ RISK_MAP = {
     "alto": 1.7
 }
 
-def gerar_sinal(base, risco):
+def carregar_config() -> Dict[str, Any]:
+    if os.path.exists(CONFIG_ARQ):
+        try:
+            with open(CONFIG_ARQ, "r", encoding="utf-8") as f:
+                cfg = json.load(f)
+            # garantir chaves padrão
+            for k, v in DEFAULTS.items():
+                cfg.setdefault(k, v)
+            return cfg
+        except Exception:
+            pass
+    return DEFAULTS.copy()
+
+def salvar_config(cfg: Dict[str, Any]) -> None:
+    try:
+        with open(CONFIG_ARQ, "w", encoding="utf-8") as f:
+            json.dump(cfg, f, ensure_ascii=False, indent=2)
+    except Exception as e:
+        print(f"[!] Falha ao salvar config: {e}")
+
+CONFIG = carregar_config()
+
+# ============================== Núcleo de Geração de Sinais ==============================
+
+def gerar_sinal(cfg: Dict[str, Any]) -> Dict[str, Any]:
+    base = float(cfg.get("base", DEFAULTS["base"]))
+    risco = str(cfg.get("risco", DEFAULTS["risco"])).lower()
     fator = RISK_MAP.get(risco, 1.0)
+
+    # stake sugerida limitada entre 0.5x e 3x da base, ajustada pelo risco
     stake = round(max(base * 0.5, min(base * (0.9 + fator), base * 3.0)), 2)
+
     estrategias = [
         "Flat (sem progressão)",
-        "Gestão 1-2",
+        "Gestão 1-2 (aumentar levemente após perda)",
         "Stop rápido (1 gale no máximo)"
     ]
     estrategia = random.choice(estrategias)
+
+    # atraso de entrada (simulação de janela/timing)
     atraso_seg = random.choice([0, 5, 10, 15, 20, 30])
+
+    # alvos/limites meramente ilustrativos (não preditivos)
     stop_win = round(stake * (1.2 + random.random() * 0.8), 2)
     stop_loss = round(stake * (1.0 + random.random() * 1.0), 2)
+
+    # confiança cosmética (não tem base real)
     confianca = random.choice(["baixa", "média", "alta"])
+
     return {
-        "hora": datetime.now().strftime("%H:%M:%S"),
+        "hora": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
         "stake": stake,
         "estrategia": estrategia,
         "atraso": atraso_seg,
         "stop_win": stop_win,
         "stop_loss": stop_loss,
-        "confianca": confianca
+        "confianca": confianca,
+        "risco": risco,
+        "base": base,
     }
 
-def exibir_sinal(sinal):
+def exibir_sinal(sinal: Dict[str, Any], cfg: Dict[str, Any]) -> None:
     quando = "agora" if sinal["atraso"] == 0 else f"em {sinal['atraso']}s"
-    print("\n🎯 Sinal Aviator")
-    print(f"Hora: {sinal['hora']}")
+    moldura = "═" * 42
+    print(f"\n{moldura}\n🎯 Sinal Aviator — {sinal['hora']}\n{moldura}")
     print(f"Entrada: {quando}")
     print(f"Stake sugerida: {sinal['stake']}")
     print(f"Estratégia: {sinal['estrategia']}")
     print(f"Stop-win: {sinal['stop_win']} | Stop-loss: {sinal['stop_loss']}")
-    print(f"Confiança: {sinal['confianca']}")
-    print("⚠️ Este sinal é fictício e não garante resultados.")
+    print(f"Confiança: {sinal['confianca']} | Risco: {sinal['risco']} | Base: {sinal['base']}")
+    print("⚠️ Este sinal é FICTÍCIO e NÃO garante resultados.")
+
+    # Contagem regressiva estética para a entrada
+    if cfg.get("contagem", True) and sinal["atraso"] > 0:
+        contagem_regressiva(sinal["atraso"])
+
+def contagem_regressiva(segundos: int) -> None:
+    print("\n⏳ Preparando entrada:", end=" ")
+    for s in range(segundos, 0, -1):
+        print(f"{s}", end="", flush=True)
+        time.sleep(1)
+        print("\b" * len(str(s)), end="", flush=True)  # apaga o número anterior
+    print("✅")
+
+def salvar_csv(sinal: Dict[str, Any], arquivo: str = HIST_ARQ) -> None:
+    novo_arquivo = not os.path.exists(arquivo)
+    campos = [
+        "hora", "entrada_em_seg", "stake", "estrategia",
+        "stop_win", "stop_loss", "confianca", "risco", "base"
+    ]
+    try:
+        with open(arquivo, "a", newline="", encoding="utf-8") as f:
+            writer = csv.DictWriter(f, fieldnames=campos)
+            if novo_arquivo:
+                writer.writeheader()
+            writer.writerow({
+                "hora": sinal["hora"],
+                "entrada_em_seg": sinal["atraso"],
+                "stake": sinal["stake"],
+                "estrategia": sinal["estrategia"],
+                "stop_win": sinal["stop_win"],
+                "stop_loss": sinal["stop_loss"],
+                "confianca": sinal["confianca"],
+                "risco": sinal["risco"],
+                "base": sinal["base"],
+            })
+    except Exception as e:
+        print(f"[!] Falha ao escrever CSV: {e}")
+
+# ============================== Interface de Linha de Comando ==============================
+
+def limpar_tela():
+    try:
+        os.system("cls" if os.name == "nt" else "clear")
+    except Exception:
+        pass
+
+def cabeçalho():
+    print("=== BOT DE SINAIS AVIATOR (FICTÍCIO) ===")
+    print("Aviso: Não há previsão real. Use por sua conta e risco.")
+    print("-----------------------------------------")
+
+def menu() -> None:
+    while True:
+        limpar_tela()
+        cabeçalho()
+        print("1) Gerar um sinal agora")
+        print("2) Começar sinais automáticos")
+        print("3) Alterar configurações")
+        print("4) Exportar um sinal para CSV")
+        print("5) Ver configurações atuais")
+        print("0) Sair")
+        opcao = input("\nEscolha uma opção: ").strip()
+
+        if opcao == "1":
+            sinal = gerar_sinal(CONFIG)
+            exibir_sinal(sinal, CONFIG)
+            if CONFIG.get("csv_auto", True):
+                salvar_csv(sinal)
+                print("💾 (Salvo automaticamente no histórico CSV)")
+            esperar_enter()
+
+        elif opcao == "2":
+            try:
+                print(f"\nIniciando sinais automáticos a cada {CONFIG['intervalo']}s... (Ctrl+C para parar)")
+                while True:
+                    sinal = gerar_sinal(CONFIG)
+                    exibir_sinal(sinal, CONFIG)
+                    if CONFIG.get("csv_auto", True):
+                        salvar_csv(sinal)
+                        print("💾 (Salvo automaticamente no histórico CSV)")
+                    time.sleep(int(CONFIG["intervalo"]))
+            except KeyboardInterrupt:
+                print("\n⏹ Sinais automáticos interrompidos.")
+                esperar_enter()
+
+        elif opcao == "3":
+            alterar_configuracoes()
+
+        elif opcao == "4":
+            sinal = gerar_sinal(CONFIG)
+            exibir_sinal(sinal, CONFIG)
+            salvar_csv(sinal)
+            print("✅ Sinal exportado para CSV.")
+            esperar_enter()
+
+        elif opcao == "5":
+            mostrar_config()
+            esperar_enter()
+
+        elif opcao == "0":
+            print("👋 Saindo...")
+            break
+
+        else:
+            print("❌ Opção inválida.")
+            time.sleep(1.2)
+
+def mostrar_config():
+    print("\n--- Configurações Atuais ---")
+    for k, v in CONFIG.items():
+        print(f"{k}: {v}")
+
+def alterar_configuracoes():
+    print("\n--- Alterar Configurações ---")
+    # base
+    try:
+        base_nova = input(f"Base atual {CONFIG['base']} → novo valor (ENTER p/ manter): ").strip()
+        if base_nova:
+            CONFIG["base"] = float(base_nova.replace(",", "."))
+    except ValueError:
+        print("Valor inválido para base. Mantendo anterior.")
+
+    # risco
+    risco_novo = input(f"Risco atual {CONFIG['risco']} (baixo/medio/alto) → novo (ENTER p/ manter): ").strip().lower()
+    if risco_novo in RISK_MAP:
+        CONFIG["risco"] = risco_novo
+    elif risco_novo:
+        print("Risco inválido. Mantendo anterior.")
+
+    # intervalo
+    try:
+        inter_novo = input(f"Intervalo atual {CONFIG['intervalo']}s → novo (ENTER p/ manter): ").strip()
+        if inter_novo:
+            val = int(inter_novo)
+            if 1 <= val <= 600:
+                CONFIG["intervalo"] = val
+            else:
+                print("Intervalo deve estar entre 1 e 600 segundos.")
+    except ValueError:
+        print("Valor inválido para intervalo. Mantendo anterior.")
+
+    # csv_auto
+    csv_auto_novo = input(f"Salvar CSV automático (atual {CONFIG['csv_auto']}) [s/n] (ENTER p/ manter): ").strip().lower()
+    if csv_auto_novo in ("s", "sim"):
+        CONFIG["csv_auto"] = True
+    elif csv_auto_novo in ("n", "nao", "não"):
+        CONFIG["csv_auto"] = False
+
+    # contagem regressiva
+    contagem_nova = input(f"Mostrar contagem regressiva (atual {CONFIG['contagem']}) [s/n] (ENTER p/ manter): ").strip().lower()
+    if contagem_nova in ("s", "sim"):
+        CONFIG["contagem"] = True
+    elif contagem_nova in ("n", "nao", "não"):
+        CONFIG["contagem"] = False
+
+    salvar_config(CONFIG)
+    print("✅ Configurações atualizadas e salvas.")
+
+def esperar_enter():
+    try:
+        input("\nPressione ENTER para continuar...")
+    except (EOFError, KeyboardInterrupt):
+        pass
+
+# ============================== Execução ==============================
+
+def main():
+    # Execução direta por argumentos (opcional, útil para automação/GitHub Actions)
+    # Exemplos:
+    #   python aviator_sinais_bot.py --once
+    #   python aviator_sinais_bot.py --auto 5
+    #   python aviator_sinais_bot.py --export
+    args = sys.argv[1:]
+    if args:
+        if args[0] == "--once":
+            sinal = gerar_sinal(CONFIG)
+            exibir_sinal(sinal, CONFIG)
+            if CONFIG.get("csv_auto", True):
+                salvar_csv(sinal)
+            return
+        if args[0] == "--auto":
+            intervalo = int(args[1]) if len(args) > 1 else int(CONFIG["intervalo"])
+            try:
+                print(f"Iniciando modo automático a cada {intervalo}s... (Ctrl+C para sair)")
+                while True:
+                    sinal = gerar_sinal(CONFIG)
+                    exibir_sinal(sinal, CONFIG)
+                    if CONFIG.get("csv_auto", True):
+                        salvar_csv(sinal)
+                    time.sleep(intervalo)
+            except KeyboardInterrupt:
+                print("\nEncerrado pelo usuário.")
+            return
+        if args[0] == "--export":
+            sinal = gerar_sinal(CONFIG)
+            exibir_sinal(sinal, CONFIG)
+            salvar_csv(sinal)
+            print("Exportado para CSV.")
+            return
+
+    # Modo interativo (menu)
+    menu()
 
 if __name__ == "__main__":
-    while True:
-        sinal = gerar_sinal(base, risco)
-        exibir_sinal(sinal)
-        time.sleep(intervalo)
+    main()
+
