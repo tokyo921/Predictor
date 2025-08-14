@@ -3,165 +3,179 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aviator - Bot de Sinais</title>
+<title>Aviator - Sinais</title>
 <style>
+    :root {
+        --bg-gradient: linear-gradient(-45deg, #1a1a1a, #121212, #1e1e1e, #2a2a2a);
+        --text-color: white;
+        --card-bg: rgba(30, 30, 30, 0.9);
+        --accent-color: #00ff88;
+        --accent-hover: #00cc6e;
+        --sub-color: #ccc;
+    }
     body {
         font-family: Arial, sans-serif;
-        background: #121212;
-        color: white;
+        background: var(--bg-gradient);
+        background-size: 400% 400%;
+        animation: bgMove 12s ease infinite;
+        color: var(--text-color);
         text-align: center;
         padding: 20px;
+        transition: background 0.5s, color 0.5s;
+    }
+    @keyframes bgMove {
+        0% {background-position: 0% 50%;}
+        50% {background-position: 100% 50%;}
+        100% {background-position: 0% 50%;}
     }
     h1 {
-        color: #00ff88;
+        color: var(--accent-color);
+        text-shadow: 0 0 10px var(--accent-color);
     }
     .card {
-        background: #1e1e1e;
-        border-radius: 12px;
-        padding: 20px;
-        max-width: 300px;
+        background: var(--card-bg);
+        border-radius: 16px;
+        padding: 25px;
+        max-width: 320px;
         margin: auto;
-        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+        box-shadow: 0 0 20px rgba(0,0,0,0.6);
+        transition: background 0.3s;
     }
     .valor {
-        font-size: 2.5em;
+        font-size: 3em;
         font-weight: bold;
-        color: #00ff88;
+        color: var(--accent-color);
+        text-shadow: 0 0 15px var(--accent-color);
+        transition: transform 0.3s, color 0.3s;
+    }
+    .flash {
+        animation: flashEffect 0.6s ease;
+    }
+    @keyframes flashEffect {
+        0% { transform: scale(1); opacity: 0.5; }
+        50% { transform: scale(1.4); opacity: 1; }
+        100% { transform: scale(1); opacity: 1; }
     }
     .sub {
         font-size: 1.2em;
         margin-top: 10px;
-        color: #ccc;
+        color: var(--sub-color);
     }
     button {
-        margin: 5px;
-        padding: 10px 20px;
-        font-size: 1em;
+        margin-top: 20px;
+        padding: 12px 25px;
+        font-size: 1.1em;
         border: none;
         border-radius: 8px;
-        background: #00ff88;
+        background: var(--accent-color);
         color: black;
         cursor: pointer;
         font-weight: bold;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
+        transition: background 0.3s, transform 0.1s;
     }
     button:hover {
-        background: #00cc6e;
+        background: var(--accent-hover);
     }
-    input {
-        width: 100px;
-        padding: 5px;
-        margin-top: 5px;
-        text-align: center;
-        border-radius: 5px;
-        border: none;
-        font-size: 1em;
-    }
-    table {
-        width: 100%;
-        margin-top: 20px;
-        border-collapse: collapse;
-    }
-    th, td {
-        border: 1px solid #333;
-        padding: 8px;
-        font-size: 0.9em;
-    }
-    th {
-        background: #222;
+    button:active {
+        transform: scale(0.95);
     }
     #online {
-        font-size: 1.2em;
+        font-size: 1.1em;
         margin-top: 15px;
-        color: #00ff88;
+        color: var(--accent-color);
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 5px;
+    }
+    .dot {
+        width: 10px;
+        height: 10px;
+        background: var(--accent-color);
+        border-radius: 50%;
+        animation: blink 1s infinite;
+    }
+    @keyframes blink {
+        0%, 100% {opacity: 1;}
+        50% {opacity: 0.3;}
+    }
+    #themeToggle {
+        position: absolute;
+        top: 15px;
+        right: 15px;
+        background: none;
+        color: var(--text-color);
+        border: 1px solid var(--sub-color);
+        padding: 5px 10px;
+        border-radius: 5px;
+        cursor: pointer;
     }
 </style>
 </head>
 <body>
 
-<h1>🎯 Bot de Sinais Aviator</h1>
+<!-- Переключатель темы -->
+<button id="themeToggle">🌙 Tema escuro</button>
 
-<!-- Онлайн игроков -->
-<div id="online">👥 Jogadores online: --</div>
+<h1>🎯 Sinais Aviator</h1>
+
+<!-- Онлайн пользователей -->
+<div id="online"><div class="dot"></div> <span id="onlineText">Jogadores online: --</span></div>
 
 <!-- Виджет -->
 <div class="card">
     <div class="valor" id="coef">--</div>
     <div class="sub">Coeficiente</div>
-    <hr style="margin:20px 0; border: 1px solid #333;">
-    <input type="number" id="valorAposta" value="30" min="1"> MZN
-    <div class="sub">Valor da aposta</div>
-    <button onclick="gerarSinal()">Gerar Novo Sinal</button>
+    <button onclick="gerarSinal()">Gerar Sinal</button>
 </div>
-
-<!-- Кнопки управления -->
-<div style="margin-top:20px;">
-    <button onclick="iniciarAutomatico()">Iniciar automático</button>
-    <button onclick="pararAutomatico()">Parar automático</button>
-    <button onclick="limparLog()">Limpar log</button>
-</div>
-
-<!-- Лог -->
-<table id="log">
-    <thead>
-        <tr>
-            <th>Hora</th>
-            <th>Coeficiente</th>
-            <th>Valor</th>
-            <th>Confiança</th>
-        </tr>
-    </thead>
-    <tbody></tbody>
-</table>
 
 <script>
-let intervaloID = null;
+let darkTheme = true;
 
-// Генерация коэффициента
+// Генерация сигнала
 function gerarSinal() {
     let coef = (Math.random() * 4 + 1).toFixed(2);
-    let confianca = ["baixa", "média", "alta"][Math.floor(Math.random() * 3)];
-    let valor = document.getElementById("valorAposta").value;
-    document.getElementById("coef").textContent = coef + "x";
-
-    let agora = new Date().toLocaleTimeString();
-    let linha = `<tr>
-        <td>${agora}</td>
-        <td>${coef}x</td>
-        <td>${valor} MZN</td>
-        <td>${confianca}</td>
-    </tr>`;
-    document.querySelector("#log tbody").insertAdjacentHTML("afterbegin", linha);
+    let coefElem = document.getElementById("coef");
+    coefElem.textContent = coef + "x";
+    coefElem.classList.remove("flash");
+    void coefElem.offsetWidth;
+    coefElem.classList.add("flash");
 }
 
-// Автоматический режим
-function iniciarAutomatico() {
-    if (!intervaloID) {
-        intervaloID = setInterval(gerarSinal, 5000);
-    }
-}
-function pararAutomatico() {
-    clearInterval(intervaloID);
-    intervaloID = null;
-}
-
-// Очистка лога
-function limparLog() {
-    document.querySelector("#log tbody").innerHTML = "";
-}
-
-// Фейковый онлайн игроков
+// Фейковый онлайн
 function atualizarOnline() {
-    let jogadores = Math.floor(Math.random() * 50) + 50; // от 50 до 100
-    document.getElementById("online").textContent = "👥 Jogadores online: " + jogadores;
+    let jogadores = Math.floor(Math.random() * 100) + 50;
+    document.getElementById("onlineText").textContent = "Jogadores online: " + jogadores;
 }
 setInterval(atualizarOnline, 3000);
 atualizarOnline();
+
+// Переключение темы
+document.getElementById("themeToggle").addEventListener("click", () => {
+    darkTheme = !darkTheme;
+    if (darkTheme) {
+        document.documentElement.style.setProperty("--bg-gradient", "linear-gradient(-45deg, #1a1a1a, #121212, #1e1e1e, #2a2a2a)");
+        document.documentElement.style.setProperty("--text-color", "white");
+        document.documentElement.style.setProperty("--card-bg", "rgba(30, 30, 30, 0.9)");
+        document.documentElement.style.setProperty("--accent-color", "#00ff88");
+        document.documentElement.style.setProperty("--accent-hover", "#00cc6e");
+        document.documentElement.style.setProperty("--sub-color", "#ccc");
+        document.getElementById("themeToggle").textContent = "🌙 Tema escuro";
+    } else {
+        document.documentElement.style.setProperty("--bg-gradient", "linear-gradient(-45deg, #e0e0e0, #f4f4f4, #ffffff, #dcdcdc)");
+        document.documentElement.style.setProperty("--text-color", "#222");
+        document.documentElement.style.setProperty("--card-bg", "rgba(255, 255, 255, 0.9)");
+        document.documentElement.style.setProperty("--accent-color", "#0077ff");
+        document.documentElement.style.setProperty("--accent-hover", "#005fcc");
+        document.documentElement.style.setProperty("--sub-color", "#555");
+        document.getElementById("themeToggle").textContent = "☀️ Tema claro";
+    }
+});
 </script>
 
 </body>
 </html>
-
-
 
 
 
