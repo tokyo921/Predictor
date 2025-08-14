@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Bot de Sinais Aviator</title>
+<title>Aviator - Bot de Sinais</title>
 <style>
     body {
         font-family: Arial, sans-serif;
@@ -47,6 +47,15 @@
     button:hover {
         background: #00cc6e;
     }
+    input {
+        width: 100px;
+        padding: 5px;
+        margin-top: 5px;
+        text-align: center;
+        border-radius: 5px;
+        border: none;
+        font-size: 1em;
+    }
     table {
         width: 100%;
         margin-top: 20px;
@@ -60,32 +69,38 @@
     th {
         background: #222;
     }
+    #online {
+        font-size: 1.2em;
+        margin-top: 15px;
+        color: #00ff88;
+    }
 </style>
 </head>
 <body>
 
 <h1>🎯 Bot de Sinais Aviator</h1>
 
-<!-- Виджет с коэффициентом и ставкой -->
+<!-- Онлайн игроков -->
+<div id="online">👥 Jogadores online: --</div>
+
+<!-- Виджет -->
 <div class="card">
     <div class="valor" id="coef">--</div>
     <div class="sub">Coeficiente</div>
     <hr style="margin:20px 0; border: 1px solid #333;">
-    <div class="valor">30 MZN</div>
+    <input type="number" id="valorAposta" value="30" min="1"> MZN
     <div class="sub">Valor da aposta</div>
     <button onclick="gerarSinal()">Gerar Novo Sinal</button>
 </div>
 
 <!-- Кнопки управления -->
 <div style="margin-top:20px;">
-    <button onclick="gerarSinalCompleto()">Gerar sinal completo</button>
     <button onclick="iniciarAutomatico()">Iniciar automático</button>
     <button onclick="pararAutomatico()">Parar automático</button>
-    <button onclick="exportarCSV()">Exportar CSV</button>
     <button onclick="limparLog()">Limpar log</button>
 </div>
 
-<!-- Лог сигналов -->
+<!-- Лог -->
 <table id="log">
     <thead>
         <tr>
@@ -101,60 +116,46 @@
 <script>
 let intervaloID = null;
 
-// Генерация только коэффициента
+// Генерация коэффициента
 function gerarSinal() {
     let coef = (Math.random() * 4 + 1).toFixed(2);
-    document.getElementById("coef").textContent = coef + "x";
-}
-
-// Генерация полного сигнала с записью в лог
-function gerarSinalCompleto() {
-    let coef = (Math.random() * 4 + 1).toFixed(2);
     let confianca = ["baixa", "média", "alta"][Math.floor(Math.random() * 3)];
+    let valor = document.getElementById("valorAposta").value;
     document.getElementById("coef").textContent = coef + "x";
 
     let agora = new Date().toLocaleTimeString();
     let linha = `<tr>
         <td>${agora}</td>
         <td>${coef}x</td>
-        <td>30 MZN</td>
+        <td>${valor} MZN</td>
         <td>${confianca}</td>
     </tr>`;
     document.querySelector("#log tbody").insertAdjacentHTML("afterbegin", linha);
 }
 
-// Авто-режим
+// Автоматический режим
 function iniciarAutomatico() {
-    if (intervaloID) return;
-    intervaloID = setInterval(gerarSinalCompleto, 5000); // каждые 5 секунд
+    if (!intervaloID) {
+        intervaloID = setInterval(gerarSinal, 5000);
+    }
 }
 function pararAutomatico() {
     clearInterval(intervaloID);
     intervaloID = null;
 }
 
-// Экспорт CSV
-function exportarCSV() {
-    let linhas = [["Hora", "Coeficiente", "Valor", "Confiança"]];
-    document.querySelectorAll("#log tbody tr").forEach(tr => {
-        let cols = Array.from(tr.querySelectorAll("td")).map(td => td.innerText);
-        linhas.push(cols);
-    });
-    let csvContent = linhas.map(e => e.join(",")).join("\n");
-    let blob = new Blob([csvContent], { type: "text/csv" });
-    let url = URL.createObjectURL(blob);
-    let a = document.createElement("a");
-    a.href = url;
-    a.download = "sinais_aviator.csv";
-    document.body.appendChild(a);
-    a.click();
-    document.body.removeChild(a);
-}
-
 // Очистка лога
 function limparLog() {
     document.querySelector("#log tbody").innerHTML = "";
 }
+
+// Фейковый онлайн игроков
+function atualizarOnline() {
+    let jogadores = Math.floor(Math.random() * 50) + 50; // от 50 до 100
+    document.getElementById("online").textContent = "👥 Jogadores online: " + jogadores;
+}
+setInterval(atualizarOnline, 3000);
+atualizarOnline();
 </script>
 
 </body>
