@@ -1,181 +1,411 @@
-<!DOCTYPE html>
-<html lang="pt">
+<!doctype html>
+<html lang="pt-MZ">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aviator - Sinais</title>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Predictor — Aviator (Mozambique)</title>
 <style>
-    :root {
-        --bg-gradient: linear-gradient(-45deg, #1a1a1a, #121212, #1e1e1e, #2a2a2a);
-        --text-color: white;
-        --card-bg: rgba(30, 30, 30, 0.9);
-        --accent-color: #00ff88;
-        --accent-hover: #00cc6e;
-        --sub-color: #ccc;
-    }
-    body {
-        font-family: Arial, sans-serif;
-        background: var(--bg-gradient);
-        background-size: 400% 400%;
-        animation: bgMove 12s ease infinite;
-        color: var(--text-color);
-        text-align: center;
-        padding: 20px;
-        transition: background 0.5s, color 0.5s;
-    }
-    @keyframes bgMove {
-        0% {background-position: 0% 50%;}
-        50% {background-position: 100% 50%;}
-        100% {background-position: 0% 50%;}
-    }
-    h1 {
-        color: var(--accent-color);
-        text-shadow: 0 0 10px var(--accent-color);
-    }
-    .card {
-        background: var(--card-bg);
-        border-radius: 16px;
-        padding: 25px;
-        max-width: 320px;
-        margin: auto;
-        box-shadow: 0 0 20px rgba(0,0,0,0.6);
-        transition: background 0.3s;
-    }
-    .valor {
-        font-size: 3em;
-        font-weight: bold;
-        color: var(--accent-color);
-        text-shadow: 0 0 15px var(--accent-color);
-        transition: transform 0.3s, color 0.3s;
-    }
-    .flash {
-        animation: flashEffect 0.6s ease;
-    }
-    @keyframes flashEffect {
-        0% { transform: scale(1); opacity: 0.5; }
-        50% { transform: scale(1.4); opacity: 1; }
-        100% { transform: scale(1); opacity: 1; }
-    }
-    .sub {
-        font-size: 1.2em;
-        margin-top: 10px;
-        color: var(--sub-color);
-    }
-    button {
-        margin-top: 20px;
-        padding: 12px 25px;
-        font-size: 1.1em;
-        border: none;
-        border-radius: 8px;
-        background: var(--accent-color);
-        color: black;
-        cursor: pointer;
-        font-weight: bold;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.4);
-        transition: background 0.3s, transform 0.1s;
-    }
-    button:hover {
-        background: var(--accent-hover);
-    }
-    button:active {
-        transform: scale(0.95);
-    }
-    #online {
-        font-size: 1.1em;
-        margin-top: 15px;
-        color: var(--accent-color);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 5px;
-    }
-    .dot {
-        width: 10px;
-        height: 10px;
-        background: var(--accent-color);
-        border-radius: 50%;
-        animation: blink 1s infinite;
-    }
-    @keyframes blink {
-        0%, 100% {opacity: 1;}
-        50% {opacity: 0.3;}
-    }
-    #themeToggle {
-        position: absolute;
-        top: 15px;
-        right: 15px;
-        background: none;
-        color: var(--text-color);
-        border: 1px solid var(--sub-color);
-        padding: 5px 10px;
-        border-radius: 5px;
-        cursor: pointer;
-    }
+  :root{
+    --bg1:#020305;
+    --bg2:#071018;
+    --panel:rgba(255,255,255,0.02);
+    --muted:#98a6ad;
+    --accent:#6fd3c7;
+    --glass: rgba(255,255,255,0.02);
+    --font: Inter, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+  }
+  *{box-sizing:border-box}
+  html,body{height:100%;margin:0;font-family:var(--font);background:linear-gradient(180deg,var(--bg1),var(--bg2));color:#eaf6f6}
+  .container{max-width:1180px;margin:20px auto;padding:18px;display:grid;grid-template-columns:2fr 1fr;gap:18px}
+  @media(max-width:980px){ .container{grid-template-columns:1fr} }
+
+  header{display:flex;align-items:center;justify-content:space-between;margin-bottom:8px}
+  header .title{display:flex;flex-direction:column}
+  header h1{margin:0;color:var(--accent);font-size:20px}
+  header .sub{color:var(--muted);font-size:13px}
+  header .meta{color:var(--muted);font-size:13px;margin-left:12px}
+
+  .panel{background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.006));border-radius:12px;padding:14px;border:1px solid rgba(255,255,255,0.02)}
+  .main{display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap}
+  .left{flex:1;display:flex;flex-direction:column;align-items:center;padding:14px;border-radius:10px}
+  .mult{font-size:88px;font-weight:900;color:var(--accent);text-shadow:0 8px 30px rgba(111,211,199,0.06)}
+  .muted{color:var(--muted)}
+  .graph{width:420px;max-width:48%;min-width:260px;height:160px;border-radius:10px;padding:8px;background:linear-gradient(180deg, rgba(255,255,255,0.006), rgba(255,255,255,0.003));display:flex;align-items:center;justify-content:center}
+
+  .controls{display:flex;gap:10px;align-items:center;margin-top:14px;flex-wrap:wrap;justify-content:center}
+  .fixed-bet{padding:10px 14px;border-radius:10px;background:rgba(0,0,0,0.14);border:1px solid rgba(255,255,255,0.02);font-weight:800}
+  .btn{padding:12px 20px;border-radius:10px;border:none;cursor:pointer;font-weight:800}
+  .btn-primary{background:linear-gradient(90deg,var(--accent), #53c9be); color:#071616; box-shadow:0 10px 30px rgba(83,201,190,0.06)}
+  .btn-ghost{background:transparent;border:1px solid rgba(255,255,255,0.03);color:var(--muted)}
+  .btn-disabled{opacity:0.45;pointer-events:none}
+
+  .status{display:flex;gap:10px;align-items:center;justify-content:center;margin-top:12px;color:var(--muted);font-size:13px}
+  .pill{background:rgba(255,255,255,0.01);padding:6px 10px;border-radius:999px;border:1px solid rgba(255,255,255,0.02)}
+
+  /* right column chat */
+  .chat-head{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+  .chat-box{height:520px;overflow:auto;padding:12px;border-radius:10px;background:linear-gradient(180deg, rgba(255,255,255,0.008), rgba(255,255,255,0.003));border:1px solid rgba(255,255,255,0.02)}
+  .msg{margin-bottom:10px;padding:10px;border-radius:8px;background:rgba(0,0,0,0.12);border:1px solid rgba(255,255,255,0.02)}
+  .who{font-weight:800;color:var(--accent);margin-bottom:6px}
+  .msg.win{border-left:4px solid rgba(125,255,200,0.9)}
+  .msg.lose{border-left:4px solid rgba(255,120,120,0.9)}
+  .chat-form{display:flex;gap:8px;margin-top:10px}
+  .chat-input{flex:1;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.03);background:rgba(0,0,0,0.14);color:inherit}
+  .signals{margin-top:12px;border-radius:8px;padding:8px;background:linear-gradient(180deg, rgba(255,255,255,0.01), rgba(255,255,255,0.004));border:1px solid rgba(255,255,255,0.02);max-height:220px;overflow:auto}
+  .signalRow{display:flex;justify-content:space-between;padding:8px;border-bottom:1px dashed rgba(255,255,255,0.02);font-weight:800;color:var(--muted)}
+
+  /* modal for ID */
+  .modal-back{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:9999}
+  .modal{background:#081018;padding:20px;border-radius:12px;border:1px solid rgba(255,255,255,0.04);width:320px;text-align:center}
+  .modal input{width:100%;padding:10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:rgba(0,0,0,0.14);color:#eaf6f6;margin-top:10px}
+  .modal button{margin-top:12px;padding:10px 14px;border-radius:8px;border:none;background:linear-gradient(90deg,var(--accent), #53c9be);font-weight:800;color:#071616;cursor:pointer}
+
+  .flash{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none}
+  .flashCircle{width:220px;height:220px;border-radius:50%;background:radial-gradient(circle, rgba(255,255,255,0.02), rgba(255,255,255,0));transform:scale(0);opacity:0}
+  .flashShow{animation:flashIn .45s forwards}
+  @keyframes flashIn{to{transform:scale(1);opacity:1}}
+
+  @media(max-width:600px){
+    .mult{font-size:56px}
+    .graph{height:120px}
+    .chat-box{height:360px}
+  }
 </style>
 </head>
 <body>
+  <!-- modal: ask user for 1xBet ID -->
+  <div id="idModal" class="modal-back" aria-hidden="false">
+    <div class="modal" role="dialog" aria-modal="true">
+      <h2>Insira o seu ID 1xBet</h2>
+      <div style="color:var(--muted);margin-top:6px;font-size:13px">Use o mesmo ID que usa em 1xBet (apenas para identificação no chat).</div>
+      <input id="userIdInput" placeholder="Seu ID 1xBet (ex: 12345678)" />
+      <button id="saveIdBtn">Entrar</button>
+    </div>
+  </div>
 
-<!-- Переключатель темы -->
-<button id="themeToggle">🌙 Tema escuro</button>
+  <header>
+    <div class="title">
+      <h1>Predictor — Aviator</h1>
+      <div class="sub">Sinais · Aposta fixa: <strong>30 MZN</strong></div>
+    </div>
+    <div style="display:flex;align-items:center;gap:12px">
+      <div id="showId" class="muted">ID: —</div>
+      <div id="online" class="muted">👥 — online</div>
+    </div>
+  </header>
 
-<h1>🎯 Sinais Aviator</h1>
+  <main class="container">
+    <section class="panel main">
+      <div class="left">
+        <div id="multiplier" class="mult">—</div>
+        <div class="muted">Multiplicador atual</div>
 
-<!-- Онлайн пользователей -->
-<div id="online"><div class="dot"></div> <span id="onlineText">Jogadores online: --</span></div>
+        <div style="margin-top:14px" class="controls">
+          <div class="fixed-bet">Valor fixo: <strong>30 MZN</strong></div>
+        </div>
 
-<!-- Виджет -->
-<div class="card">
-    <div class="valor" id="coef">--</div>
-    <div class="sub">Coeficiente</div>
-    <button onclick="gerarSinal()">Gerar Sinal</button>
-</div>
+        <div class="controls" style="margin-top:8px">
+          <button id="placeBtn" class="btn btn-primary">Colocar Aposta</button>
+          <button id="getSignalBtn" class="btn btn-ghost">Obter Sinal</button>
+          <button id="cashBtn" class="btn btn-ghost btn-disabled" disabled>Cashout</button>
+        </div>
+
+        <div class="status" style="margin-top:12px">
+          <div class="pill" id="statePill">Estado: aguardando</div>
+          <div class="pill" id="lastSignal">Último sinal: --</div>
+          <div class="pill" id="playersPill">👥 -- online</div>
+        </div>
+      </div>
+
+      <div class="graph">
+        <canvas id="graphCanvas" width="420" height="160"></canvas>
+      </div>
+    </section>
+
+    <aside class="panel">
+      <div class="chat-head">
+        <strong>Chat ao vivo</strong>
+        <div class="muted">Jogadores</div>
+      </div>
+
+      <div id="chatBox" class="chat-box" aria-live="polite"></div>
+
+      <div class="chat-form">
+        <input id="chatInput" class="chat-input" placeholder="Escreva (será mostrado com o seu ID) — ex.: 'Cashout 3.2x!'" />
+        <button id="sendChatBtn" class="btn btn-primary">Enviar</button>
+      </div>
+
+      <div style="margin-top:12px">
+        <strong style="display:block;margin-bottom:8px">Sinais recentes</strong>
+        <div id="signals" class="signals"></div>
+      </div>
+    </aside>
+  </main>
+
+  <div class="flash"><div id="flashCircle" class="flashCircle"></div></div>
 
 <script>
-let darkTheme = true;
+/* Predictor-like page with:
+   - prompt for user's 1xBet ID on entry (used as chat name)
+   - fake online counter
+   - fake live chat messages in Portuguese (Mozambique)
+   - "Obter Sinal" generates a coefficient that stays until next click
+   - fixed bet 30 MZN
+   - airplane-like sound played on each signal (WebAudio synth, same sound each time)
+*/
 
-// Генерация сигнала
-function gerarSinal() {
-    let coef = (Math.random() * 4 + 1).toFixed(2);
-    let coefElem = document.getElementById("coef");
-    coefElem.textContent = coef + "x";
-    coefElem.classList.remove("flash");
-    void coefElem.offsetWidth;
-    coefElem.classList.add("flash");
+// ---- State
+const MIN_BET = 30;
+let userId = null;
+let state = {
+  betPlaced: false,
+  betAmount: MIN_BET,
+  lastCoef: null,
+  cashed: false,
+  players: 0
+};
+
+// ---- DOM
+const idModal = document.getElementById('idModal');
+const userIdInput = document.getElementById('userIdInput');
+const saveIdBtn = document.getElementById('saveIdBtn');
+const showId = document.getElementById('showId');
+const online = document.getElementById('online');
+
+const multiplierEl = document.getElementById('multiplier');
+const statePill = document.getElementById('statePill');
+const lastSignalEl = document.getElementById('lastSignal');
+const playersPill = document.getElementById('playersPill');
+
+const placeBtn = document.getElementById('placeBtn');
+const getSignalBtn = document.getElementById('getSignalBtn');
+const cashBtn = document.getElementById('cashBtn');
+
+const chatBox = document.getElementById('chatBox');
+const chatInput = document.getElementById('chatInput');
+const sendChatBtn = document.getElementById('sendChatBtn');
+
+const signalsEl = document.getElementById('signals');
+const graphCanvas = document.getElementById('graphCanvas');
+const gctx = graphCanvas.getContext('2d');
+
+const flashCircle = document.getElementById('flashCircle');
+
+// ---- Audio (airplane-like fixed sound)
+const AudioCtx = window.AudioContext || window.webkitAudioContext;
+const audioCtx = AudioCtx ? new AudioCtx() : null;
+
+function playPlaneSound(){
+  if(!audioCtx) return;
+  const now = audioCtx.currentTime;
+  // whoosh (noise)
+  const len = Math.floor(audioCtx.sampleRate * 0.35);
+  const buffer = audioCtx.createBuffer(1, len, audioCtx.sampleRate);
+  const data = buffer.getChannelData(0);
+  for(let i=0;i<len;i++) data[i] = (Math.random()*2-1) * (1 - i/len) * 0.8;
+  const src = audioCtx.createBufferSource(); src.buffer = buffer;
+  const flt = audioCtx.createBiquadFilter(); flt.type = 'lowpass';
+  flt.frequency.setValueAtTime(1600, now);
+  src.connect(flt); flt.connect(audioCtx.destination);
+  src.start(now); src.stop(now + 0.36);
+
+  // engine rumble (low oscillator)
+  const osc = audioCtx.createOscillator();
+  const gain = audioCtx.createGain();
+  osc.type = 'sawtooth';
+  osc.frequency.setValueAtTime(70, now);
+  gain.gain.setValueAtTime(0.0001, now);
+  gain.gain.linearRampToValueAtTime(0.07, now + 0.05);
+  gain.gain.exponentialRampToValueAtTime(0.0001, now + 0.9);
+  osc.connect(gain); gain.connect(audioCtx.destination);
+  osc.start(now); osc.stop(now + 0.95);
 }
 
-// Фейковый онлайн
-function atualizarOnline() {
-    let jogadores = Math.floor(Math.random() * 100) + 50;
-    document.getElementById("onlineText").textContent = "Jogadores online: " + jogadores;
-}
-setInterval(atualizarOnline, 3000);
-atualizarOnline();
+// ---- Modal: save ID and close
+saveIdBtn.addEventListener('click', ()=>{
+  const v = userIdInput.value.trim();
+  if(!v){ userIdInput.focus(); return; }
+  userId = v;
+  showId.textContent = 'ID: ' + userId;
+  idModal.style.display = 'none';
+  idModal.setAttribute('aria-hidden','true');
+  pushSystem('Bem-vindo ' + userId + ' — verifique os sinais');
+});
 
-// Переключение темы
-document.getElementById("themeToggle").addEventListener("click", () => {
-    darkTheme = !darkTheme;
-    if (darkTheme) {
-        document.documentElement.style.setProperty("--bg-gradient", "linear-gradient(-45deg, #1a1a1a, #121212, #1e1e1e, #2a2a2a)");
-        document.documentElement.style.setProperty("--text-color", "white");
-        document.documentElement.style.setProperty("--card-bg", "rgba(30, 30, 30, 0.9)");
-        document.documentElement.style.setProperty("--accent-color", "#00ff88");
-        document.documentElement.style.setProperty("--accent-hover", "#00cc6e");
-        document.documentElement.style.setProperty("--sub-color", "#ccc");
-        document.getElementById("themeToggle").textContent = "🌙 Tema escuro";
-    } else {
-        document.documentElement.style.setProperty("--bg-gradient", "linear-gradient(-45deg, #e0e0e0, #f4f4f4, #ffffff, #dcdcdc)");
-        document.documentElement.style.setProperty("--text-color", "#222");
-        document.documentElement.style.setProperty("--card-bg", "rgba(255, 255, 255, 0.9)");
-        document.documentElement.style.setProperty("--accent-color", "#0077ff");
-        document.documentElement.style.setProperty("--accent-hover", "#005fcc");
-        document.documentElement.style.setProperty("--sub-color", "#555");
-        document.getElementById("themeToggle").textContent = "☀️ Tema claro";
-    }
+// allow Enter to submit
+userIdInput.addEventListener('keydown', (e)=>{ if(e.key === 'Enter') saveIdBtn.click(); });
+
+// ---- Fake online counter
+function updatePlayers(){
+  state.players = Math.floor(Math.random()*400 + 50);
+  online.textContent = '👥 ' + state.players + ' online';
+  playersPill.textContent = '👥 ' + state.players + ' online';
+}
+setInterval(updatePlayers, 2500);
+updatePlayers();
+
+// ---- Chat: messages in Portuguese (Mozambique flavour)
+const autoMsgs = [
+  "Peguei 3.2x — bom lucro!",
+  "Cashout 2.5x, funcionou!",
+  "Perdi 30 MZN, entrou cedo 😅",
+  "Sinal certeiro, obrigado!",
+  "30 virou 120 MZN, top!",
+  "Segui o sinal e peguei 4x",
+  "Alguém mais pegou 3.8x?",
+  "Funciona sempre nessa sequência",
+  "Ótimo dia, ganhos garantidos :)",
+  "Vou aumentar a aposta na próxima"
+];
+
+function pushChat(name, text, cls=''){
+  const el = document.createElement('div');
+  el.className = 'msg ' + (cls || '');
+  const who = document.createElement('div'); who.className = 'who'; who.textContent = name;
+  const body = document.createElement('div'); body.className = 'body'; body.textContent = text;
+  el.appendChild(who); el.appendChild(body);
+  chatBox.appendChild(el);
+  chatBox.scrollTop = chatBox.scrollHeight;
+}
+
+function pushSystem(text){
+  pushChat('Sistema', text);
+}
+
+// auto-fake messages spawn
+function spawnAuto(){
+  const id = 'Jogador' + Math.floor(Math.random()*9000 + 1000);
+  const text = autoMsgs[Math.floor(Math.random()*autoMsgs.length)];
+  const cls = /Peguei|Cashout|funcionou|top|peguei|garantidos/i.test(text) ? 'win' : '';
+  pushChat(id, text, cls);
+}
+setInterval(spawnAuto, 3000);
+spawnAuto();
+
+// user sends chat (uses their userId)
+sendChatBtn.addEventListener('click', ()=>{
+  if(!userId){
+    alert('Por favor, insira o seu ID 1xBet ao entrar.');
+    idModal.style.display = 'flex'; idModal.setAttribute('aria-hidden','false');
+    return;
+  }
+  const txt = chatInput.value.trim();
+  if(!txt) return;
+  pushChat(userId, txt, /peguei|cashout|funcionou|ganhei|ganho/i.test(txt)?'win':'');
+  chatInput.value = '';
+});
+chatInput.addEventListener('keydown', e=>{ if(e.key==='Enter') sendChatBtn.click(); });
+
+// ---- Signals: generate coef only on click; coef stays until next click
+function addSignalToList(coef){
+  const r = document.createElement('div');
+  r.className = 'signalRow';
+  r.innerHTML = `<div>${new Date().toLocaleTimeString()}</div><div style="color:var(--muted)">${coef}x</div>`;
+  signalsEl.prepend(r);
+  while(signalsEl.children.length > 12) signalsEl.removeChild(signalsEl.lastChild);
+}
+
+getSignalBtn.addEventListener('click', ()=>{
+  // biased random toward lower multipliers
+  let raw = Math.pow(Math.random(), 1.45) * 5.5 + 1.05;
+  raw = Math.max(1.05, Math.min(raw, 18));
+  const coef = Number(raw.toFixed(2));
+  state.lastCoef = coef;
+  multiplierEl.textContent = coef.toFixed(2) + 'x';
+  lastSignalEl.textContent = 'Último sinal: ' + coef.toFixed(2) + 'x';
+  addSignalToList(coef.toFixed(2));
+  pushChat('SinalBot', 'Sinal sugerido: ' + coef.toFixed(2) + 'x');
+  // play plane sound (same each time)
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  playPlaneSound();
+  flash();
+  // if user has a bet, enable cash
+  if(state.betPlaced && !state.cashed){
+    cashBtn.disabled = false; cashBtn.classList.remove('btn-disabled');
+  }
+});
+
+// place fixed bet
+placeBtn.addEventListener('click', ()=>{
+  if(!userId){
+    alert('Insira seu ID 1xBet primeiro.');
+    idModal.style.display = 'flex'; idModal.setAttribute('aria-hidden','false');
+    return;
+  }
+  if(state.betPlaced){
+    alert('Já tem uma aposta pendente (30 MZN).');
+    return;
+  }
+  state.betPlaced = true; state.betAmount = MIN_BET; state.cashed = false;
+  pushChat(userId, `Coloquei ${MIN_BET} MZN — aguardando sinal`, 'win');
+});
+
+// cashout uses lastCoef
+cashBtn.addEventListener('click', ()=>{
+  if(!state.betPlaced || !state.lastCoef || state.cashed){
+    alert('Sem aposta ativa ou sem sinal disponível.');
+    return;
+  }
+  const payout = (state.betAmount * state.lastCoef).toFixed(2);
+  state.cashed = true;
+  cashBtn.disabled = true; cashBtn.classList.add('btn-disabled');
+  pushChat(userId, `Cashout em ${state.lastCoef.toFixed(2)}x → Recebi ${payout} MZN`, 'win');
+  flash('rgba(140,255,200,0.95)');
+});
+
+// visual flash
+function flash(color='rgba(150,220,200,0.9)'){
+  flashCircle.style.background = `radial-gradient(circle, ${color}, rgba(0,0,0,0))`;
+  flashCircle.classList.add('flashShow');
+  setTimeout(()=> flashCircle.classList.remove('flashShow'), 600);
+}
+
+// Decorative graph — small noise, no game logic
+let graph = [{x:0,y:1}];
+function graphPush(v){ graph.push({x:graph.length,y:v}); if(graph.length>300) graph.shift(); }
+function drawGraph(){
+  const W = graphCanvas.width = graphCanvas.clientWidth * (window.devicePixelRatio || 1);
+  const H = graphCanvas.height = graphCanvas.clientHeight * (window.devicePixelRatio || 1);
+  gctx.clearRect(0,0,W,H);
+  const view = graph.slice(-120);
+  const maxY = Math.max(...view.map(p=>p.y), 3);
+  gctx.beginPath();
+  for(let i=0;i<view.length;i++){
+    const p = view[i];
+    const sx = (i/(view.length-1||1))*W;
+    const sy = H - ((p.y / maxY) * (H - 12)) - 6;
+    if(i===0) gctx.moveTo(sx,sy); else gctx.lineTo(sx,sy);
+  }
+  gctx.strokeStyle = 'rgba(120,160,150,0.9)';
+  gctx.lineWidth = 2 * (window.devicePixelRatio || 1);
+  gctx.stroke();
+  gctx.lineTo(W,H); gctx.lineTo(0,H); gctx.closePath();
+  const grad = gctx.createLinearGradient(0,0,0,H);
+  grad.addColorStop(0,'rgba(120,160,150,0.06)'); grad.addColorStop(1,'rgba(120,160,150,0.01)');
+  gctx.fillStyle = grad; gctx.fill();
+}
+setInterval(()=>{
+  const last = graph.length ? graph[graph.length-1].y : 1;
+  const next = Math.max(1, last + (Math.random()-0.5)*0.04);
+  graphPush(next);
+  drawGraph();
+}, 900);
+
+// seed signals and welcome text
+(function init(){
+  addSignalToList('—');
+  pushSystem('Bem-vindo! Insira seu ID 1xBet para participar do chat.');
+})();
+
+// Accessibility: resume audio on first user gesture (browsers require)
+document.addEventListener('click', function resume(){
+  if(audioCtx && audioCtx.state === 'suspended') audioCtx.resume();
+  document.removeEventListener('click', resume);
 });
 </script>
-
 </body>
 </html>
+
 
 
 
