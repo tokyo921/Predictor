@@ -1,0 +1,54 @@
+import time
+import random
+from datetime import datetime
+
+# === Настройки ===
+base = 2.0          # ставка по умолчанию
+risco = "medio"     # baixo, medio, alto
+intervalo = 10      # пауза между сигналами (в секундах)
+
+RISK_MAP = {
+    "baixo": 0.5,
+    "medio": 1.0,
+    "alto": 1.7
+}
+
+def gerar_sinal(base, risco):
+    fator = RISK_MAP.get(risco, 1.0)
+    stake = round(max(base * 0.5, min(base * (0.9 + fator), base * 3.0)), 2)
+    estrategias = [
+        "Flat (sem progressão)",
+        "Gestão 1-2",
+        "Stop rápido (1 gale no máximo)"
+    ]
+    estrategia = random.choice(estrategias)
+    atraso_seg = random.choice([0, 5, 10, 15, 20, 30])
+    stop_win = round(stake * (1.2 + random.random() * 0.8), 2)
+    stop_loss = round(stake * (1.0 + random.random() * 1.0), 2)
+    confianca = random.choice(["baixa", "média", "alta"])
+    return {
+        "hora": datetime.now().strftime("%H:%M:%S"),
+        "stake": stake,
+        "estrategia": estrategia,
+        "atraso": atraso_seg,
+        "stop_win": stop_win,
+        "stop_loss": stop_loss,
+        "confianca": confianca
+    }
+
+def exibir_sinal(sinal):
+    quando = "agora" if sinal["atraso"] == 0 else f"em {sinal['atraso']}s"
+    print("\n🎯 Sinal Aviator")
+    print(f"Hora: {sinal['hora']}")
+    print(f"Entrada: {quando}")
+    print(f"Stake sugerida: {sinal['stake']}")
+    print(f"Estratégia: {sinal['estrategia']}")
+    print(f"Stop-win: {sinal['stop_win']} | Stop-loss: {sinal['stop_loss']}")
+    print(f"Confiança: {sinal['confianca']}")
+    print("⚠️ Este sinal é fictício e não garante resultados.")
+
+if __name__ == "__main__":
+    while True:
+        sinal = gerar_sinal(base, risco)
+        exibir_sinal(sinal)
+        time.sleep(intervalo)
