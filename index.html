@@ -3,57 +3,99 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aviator - Bot de Sinais</title>
+<title>Aviator Predictor</title>
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #121212;
-    color: white;
-    text-align: center;
-}
-#loading {
-    position: fixed;
-    top:0; left:0; width:100%; height:100%;
-    background: #121212;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    font-size: 1.5em;
-    color: #00ff88;
-}
-#login { display: none; margin-top: 50px; }
-#login input {
-    width: 200px; padding: 10px; border-radius: 8px; border: none;
-    text-align: center; font-size: 1em; margin-right: 10px;
-}
-#login button {
-    padding: 10px 20px; border-radius: 8px; border: none;
-    background: #00ff88; color: black; font-weight: bold; cursor: pointer;
-}
-#main { display: none; padding: 10px; }
-h1, h2 { color: #00ff88; }
-.card {
-    background: #1e1e1e; border-radius: 12px; padding: 20px;
-    margin: 10px auto; max-width: 400px; box-shadow: 0 0 10px rgba(0,0,0,0.5);
-}
-.valor { font-size: 2.2em; font-weight: bold; color: #00ff88; margin-bottom: 10px; }
-button.main-btn {
-    margin: 10px 0; padding: 10px 20px; font-size: 1em; border: none;
-    border-radius: 8px; background: #00ff88; color: black; cursor: pointer;
-    font-weight: bold; width: 100%;
-}
-button.main-btn:hover { background: #00cc6e; }
-#online, #tempoSinal { margin: 10px 0; font-size: 1.1em; color: #00ff88; }
-#historico { max-width: 400px; margin: 10px auto; text-align: left; padding: 0; }
-#historico li {
-    list-style: none; background: #1a1a1a; margin: 5px 0; padding: 8px 10px;
-    border-radius: 8px; font-size: 0.95em;
-}
-.progress-bar-container {
-    width: 100%; background: #333; border-radius: 8px; height: 15px; margin-top: 10px; overflow: hidden;
-}
-.progress-bar { height: 100%; width: 0%; background: #00ff88; transition: width 0.05s; }
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        background: #121212;
+        color: white;
+        text-align: center;
+    }
+    #loading {
+        position: fixed;
+        top:0; left:0; width:100%; height:100%;
+        background: #121212;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        flex-direction: column;
+        z-index: 9999;
+        font-size: 1.5em;
+        color: #00ff88;
+    }
+    #login {
+        display: none;
+        margin-top: 50px;
+    }
+    #login input {
+        width: 200px;
+        padding: 10px;
+        border-radius: 8px;
+        border: none;
+        text-align: center;
+        font-size: 1em;
+        margin-right: 10px;
+    }
+    #login button {
+        padding: 10px 20px;
+        border-radius: 8px;
+        border: none;
+        background: #00ff88;
+        color: black;
+        font-weight: bold;
+        cursor: pointer;
+    }
+    #main {
+        display: none;
+        padding: 20px;
+    }
+    h1 { color: #00ff88; }
+    .card {
+        background: #1e1e1e;
+        border-radius: 12px;
+        padding: 20px;
+        max-width: 300px;
+        margin: 20px auto;
+        box-shadow: 0 0 15px rgba(0,0,0,0.5);
+    }
+    .valor {
+        font-size: 2.5em;
+        font-weight: bold;
+        color: #00ff88;
+        margin-bottom: 10px;
+    }
+    button.main-btn {
+        margin: 10px 0;
+        padding: 10px 20px;
+        font-size: 1em;
+        border: none;
+        border-radius: 8px;
+        background: #00ff88;
+        color: black;
+        cursor: pointer;
+        font-weight: bold;
+    }
+    button.main-btn:hover { background: #00cc6e; }
+    #online {
+        margin-top: 20px;
+        font-size: 1.2em;
+        color: #00ff88;
+    }
+    #history {
+        margin-top: 20px;
+        text-align: left;
+        max-width: 350px;
+        margin-left: auto;
+        margin-right: auto;
+    }
+    .history-item {
+        background: #222;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 8px;
+        font-size: 0.9em;
+    }
 </style>
 </head>
 <body>
@@ -68,21 +110,15 @@ button.main-btn:hover { background: #00cc6e; }
 </div>
 
 <div id="main">
-    <h1>🎯 Bot de Sinais Aviator</h1>
+    <h1>🎯 Aviator Predictor</h1>
     <div id="online">👥 Jogadores online: --</div>
-
     <div class="card">
         <div class="valor" id="coef">--</div>
-        <div id="tempoSinal"></div>
-        <div class="progress-bar-container"><div class="progress-bar" id="progress"></div></div>
         <button class="main-btn" onclick="gerarSinal()">Obter Sinal ✈️</button>
     </div>
-
-    <h2>Histórico de Jogos</h2>
-    <ul id="historico"></ul>
-
-    <!-- Женский звук сигнала -->
-    <audio id="audioSinal" src="https://www.soundjay.com/human/female-scream-01.mp3"></audio>
+    <div id="history">
+        <h3>Histórico de sinais:</h3>
+    </div>
 </div>
 
 <script>
@@ -90,7 +126,7 @@ button.main-btn:hover { background: #00cc6e; }
 setTimeout(() => {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('login').style.display = 'block';
-}, 1500);
+}, 2000);
 
 // Вход по ID
 function entrar() {
@@ -107,64 +143,51 @@ function entrar() {
 
 // Онлайн-счетчик (фейковый)
 function atualizarOnline() {
-    const jogadores = Math.floor(Math.random() * 50) + 50;
+    const jogadores = Math.floor(Math.random() * 50) + 50; // 50-100
     document.getElementById('online').textContent = "👥 Jogadores online: " + jogadores;
 }
 setInterval(atualizarOnline, 3000);
 atualizarOnline();
 
-// Генерация сигнала за 2 секунды с прогресс-баром и звуком
+// Время Мозамбика
+function getMozambiqueTime() {
+    const now = new Date();
+    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
+    return new Date(utc + 2 * 3600000); // GMT+2
+}
+
+// Генерация сигнала
 function gerarSinal() {
-    const coefEl = document.getElementById('coef');
-    const tempoSinalEl = document.getElementById('tempoSinal');
-    const progressEl = document.getElementById('progress');
-    const audio = document.getElementById('audioSinal');
+    const coefElement = document.getElementById('coef');
+    coefElement.textContent = "Carregando...";
+    
+    // Случайное время подготовки сигнала: 2–5 минут вперед
+    const prepMinutes = Math.floor(Math.random() * 4) + 2;
+    const signalTime = new Date(getMozambiqueTime().getTime() + prepMinutes * 60000);
 
-    coefEl.textContent = "⏳ Preparando sinal...";
-    tempoSinalEl.textContent = "";
-    progressEl.style.width = "0%";
-
-    const duration = 2000; // 2 секунды
-    const start = Date.now();
-
-    const interval = setInterval(() => {
-        const elapsed = Date.now() - start;
-        const percent = Math.min((elapsed / duration) * 100, 100);
-        progressEl.style.width = percent + "%";
-        if(percent >= 100) clearInterval(interval);
-    }, 20);
+    // Звуковое уведомление (женский голос/мелодия)
+    const audio = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
+    audio.volume = 0.5;
 
     setTimeout(() => {
-        // Генерируем коэффициент
         const coef = (Math.random() * 4 + 1).toFixed(2);
-        coefEl.textContent = coef + "x";
-
-        // Время для ставки по Мозамбику через случайные 2–5 минут
-        const delayMinutes = Math.floor(Math.random() * (5 - 2 + 1)) + 2;
-        const now = new Date();
-        const mozTime = new Date(now.toLocaleString("en-US", {timeZone: "Africa/Maputo"}));
-        mozTime.setMinutes(mozTime.getMinutes() + delayMinutes);
-        const hora = mozTime.getHours().toString().padStart(2,"0");
-        const minuto = mozTime.getMinutes().toString().padStart(2,"0");
-
-        tempoSinalEl.textContent = `⏰ Coloque sua aposta em: ${hora}:${minuto}`;
-
-        // Добавляем в историю
-        const historico = document.getElementById('historico');
-        const li = document.createElement('li');
-        li.textContent = `⏰ ${hora}:${minuto} - Coeficiente: ${coef}x`;
-        historico.prepend(li);
-        if(historico.children.length > 10) historico.removeChild(historico.lastChild);
-
-        // Воспроизвести звук
-        audio.currentTime = 0;
+        coefElement.textContent = `${coef}x`;
+        coefElement.innerHTML += `<br>⏰ Apostar às ${signalTime.getHours()}:${signalTime.getMinutes().toString().padStart(2,'0')} MZN`;
         audio.play();
-    }, duration);
+
+        // Добавление в историю
+        const hist = document.getElementById('history');
+        const item = document.createElement('div');
+        item.className = "history-item";
+        item.textContent = `Sinal: ${coef}x — Hora: ${signalTime.getHours()}:${signalTime.getMinutes().toString().padStart(2,'0')} MZN`;
+        hist.prepend(item);
+    }, 2000); // 2 секунды загрузка
 }
 </script>
 
 </body>
 </html>
+
 
 
 
