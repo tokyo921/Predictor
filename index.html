@@ -81,7 +81,8 @@ button.main-btn:hover { background: #00cc6e; }
     <h2>Histórico de Jogos</h2>
     <ul id="historico"></ul>
 
-    <audio id="audioSinal" src="https://actions.google.com/sounds/v1/human/oh_yeah.ogg"></audio>
+    <!-- Женский звук сигнала -->
+    <audio id="audioSinal" src="https://www.soundjay.com/human/female-scream-01.mp3"></audio>
 </div>
 
 <script>
@@ -112,7 +113,7 @@ function atualizarOnline() {
 setInterval(atualizarOnline, 3000);
 atualizarOnline();
 
-// Генерация сигнала за 2 секунды с полоской и звуком
+// Генерация сигнала за 2 секунды с прогресс-баром и звуком
 function gerarSinal() {
     const coefEl = document.getElementById('coef');
     const tempoSinalEl = document.getElementById('tempoSinal');
