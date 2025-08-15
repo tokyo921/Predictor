@@ -5,87 +5,110 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aviator - Bot de Sinais</title>
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #121212;
-        color: white;
-        text-align: center;
-    }
-    #loading {
-        position: fixed;
-        top:0; left:0; width:100%; height:100%;
-        background: #121212;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        flex-direction: column;
-        z-index: 9999;
-        font-size: 1.5em;
-        color: #00ff88;
-    }
-    #login {
-        display: none;
-        margin-top: 50px;
-    }
-    #login input {
-        width: 200px;
-        padding: 10px;
-        border-radius: 8px;
-        border: none;
-        text-align: center;
-        font-size: 1em;
-        margin-right: 10px;
-    }
-    #login button {
-        padding: 10px 20px;
-        border-radius: 8px;
-        border: none;
-        background: #00ff88;
-        color: black;
-        font-weight: bold;
-        cursor: pointer;
-    }
-    #main {
-        display: none;
-        padding: 20px;
-    }
-    h1, h2 { color: #00ff88; }
-    .card {
-        background: #1e1e1e;
-        border-radius: 12px;
-        padding: 20px;
-        max-width: 300px;
-        margin: 20px auto;
-        box-shadow: 0 0 15px rgba(0,0,0,0.5);
-    }
-    .valor {
-        font-size: 2.5em;
-        font-weight: bold;
-        color: #00ff88;
-    }
-    button.main-btn {
-        margin: 10px 0;
-        padding: 10px 20px;
-        font-size: 1em;
-        border: none;
-        border-radius: 8px;
-        background: #00ff88;
-        color: black;
-        cursor: pointer;
-        font-weight: bold;
-    }
-    button.main-btn:hover { background: #00cc6e; }
-    #online, #tempoSinal {
-        margin-top: 20px;
-        font-size: 1.2em;
-        color: #00ff88;
-    }
-    #historico li {
-        text-align: left;
-        margin: 5px 0;
-        list-style: none;
-    }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: white;
+    text-align: center;
+}
+#loading {
+    position: fixed;
+    top:0; left:0; width:100%; height:100%;
+    background: #121212;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 1.5em;
+    color: #00ff88;
+}
+#login {
+    display: none;
+    margin-top: 50px;
+}
+#login input {
+    width: 200px;
+    padding: 10px;
+    border-radius: 8px;
+    border: none;
+    text-align: center;
+    font-size: 1em;
+    margin-right: 10px;
+}
+#login button {
+    padding: 10px 20px;
+    border-radius: 8px;
+    border: none;
+    background: #00ff88;
+    color: black;
+    font-weight: bold;
+    cursor: pointer;
+}
+#main {
+    display: none;
+    padding: 10px;
+}
+h1, h2 { color: #00ff88; }
+.card {
+    background: #1e1e1e;
+    border-radius: 12px;
+    padding: 20px;
+    margin: 10px auto;
+    max-width: 400px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+.valor {
+    font-size: 2.2em;
+    font-weight: bold;
+    color: #00ff88;
+    margin-bottom: 10px;
+}
+button.main-btn {
+    margin: 10px 0;
+    padding: 10px 20px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    background: #00ff88;
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
+    width: 100%;
+}
+button.main-btn:hover { background: #00cc6e; }
+#online, #tempoSinal {
+    margin: 10px 0;
+    font-size: 1.1em;
+    color: #00ff88;
+}
+#historico {
+    max-width: 400px;
+    margin: 10px auto;
+    text-align: left;
+    padding: 0;
+}
+#historico li {
+    list-style: none;
+    background: #1a1a1a;
+    margin: 5px 0;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 0.95em;
+}
+.progress-bar-container {
+    width: 100%;
+    background: #333;
+    border-radius: 8px;
+    height: 15px;
+    margin-top: 10px;
+    overflow: hidden;
+}
+.progress-bar {
+    height: 100%;
+    width: 0%;
+    background: #00ff88;
+    transition: width 0.2s;
+}
 </style>
 </head>
 <body>
@@ -102,9 +125,11 @@
 <div id="main">
     <h1>🎯 Bot de Sinais Aviator</h1>
     <div id="online">👥 Jogadores online: --</div>
+
     <div class="card">
         <div class="valor" id="coef">--</div>
         <div id="tempoSinal"></div>
+        <div class="progress-bar-container"><div class="progress-bar" id="progress"></div></div>
         <button class="main-btn" onclick="gerarSinal()">Obter Sinal ✈️</button>
     </div>
 
@@ -117,7 +142,7 @@
 setTimeout(() => {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('login').style.display = 'block';
-}, 2000);
+}, 1500);
 
 // Вход по ID
 function entrar() {
@@ -140,24 +165,39 @@ function atualizarOnline() {
 setInterval(atualizarOnline, 3000);
 atualizarOnline();
 
-// Генерация сигнала с таймером
+// Генерация сигнала с прогресс-баром и случайным временем
 function gerarSinal() {
-    const tempoSinalEl = document.getElementById('tempoSinal');
     const coefEl = document.getElementById('coef');
+    const tempoSinalEl = document.getElementById('tempoSinal');
+    const progressEl = document.getElementById('progress');
 
-    coefEl.textContent = "⏳ Carregando sinal...";
+    coefEl.textContent = "⏳ Preparando sinal...";
     tempoSinalEl.textContent = "";
+    progressEl.style.width = "0%";
 
-    // Время по Мозамбику
-    const now = new Date();
-    const mozambiqueTime = new Date(now.toLocaleString("en-US", {timeZone: "Africa/Maputo"}));
-    const hora = mozambiqueTime.getHours().toString().padStart(2,"0");
-    const minuto = mozambiqueTime.getMinutes().toString().padStart(2,"0");
+    // Случайный таймер 2-5 минут в миллисекундах
+    const delay = (Math.floor(Math.random() * (300 - 120 + 1)) + 120) * 1000;
+    let start = null;
 
-    // Симулируем загрузку 5 секунд
+    function animateProgress(timestamp) {
+        if (!start) start = timestamp;
+        const progress = Math.min((timestamp - start) / delay * 100, 100);
+        progressEl.style.width = progress + "%";
+        if (progress < 100) {
+            requestAnimationFrame(animateProgress);
+        }
+    }
+    requestAnimationFrame(animateProgress);
+
     setTimeout(() => {
         const coef = (Math.random() * 4 + 1).toFixed(2);
         coefEl.textContent = coef + "x";
+
+        // Время по Мозамбику
+        const now = new Date();
+        const mozTime = new Date(now.toLocaleString("en-US", {timeZone: "Africa/Maputo"}));
+        const hora = mozTime.getHours().toString().padStart(2,"0");
+        const minuto = mozTime.getMinutes().toString().padStart(2,"0");
 
         tempoSinalEl.textContent = `⏰ Coloque sua aposta em: ${hora}:${minuto}`;
 
@@ -166,18 +206,17 @@ function gerarSinal() {
         const li = document.createElement('li');
         li.textContent = `⏰ ${hora}:${minuto} - Coeficiente: ${coef}x`;
         historico.prepend(li);
-        if(historico.children.length > 10) {
-            historico.removeChild(historico.lastChild);
-        }
+        if(historico.children.length > 10) historico.removeChild(historico.lastChild);
 
         const audio = new Audio('https://actions.google.com/sounds/v1/transport/airplane_flyby.ogg');
         audio.play();
-    }, 5000);
+    }, delay);
 }
 </script>
 
 </body>
 </html>
+
 
 
 
