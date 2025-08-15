@@ -50,7 +50,7 @@
         display: none;
         padding: 20px;
     }
-    h1 { color: #00ff88; }
+    h1, h2 { color: #00ff88; }
     .card {
         background: #1e1e1e;
         border-radius: 12px;
@@ -76,10 +76,15 @@
         font-weight: bold;
     }
     button.main-btn:hover { background: #00cc6e; }
-    #online {
+    #online, #tempoSinal {
         margin-top: 20px;
         font-size: 1.2em;
         color: #00ff88;
+    }
+    #historico li {
+        text-align: left;
+        margin: 5px 0;
+        list-style: none;
     }
 </style>
 </head>
@@ -99,8 +104,12 @@
     <div id="online">👥 Jogadores online: --</div>
     <div class="card">
         <div class="valor" id="coef">--</div>
+        <div id="tempoSinal"></div>
         <button class="main-btn" onclick="gerarSinal()">Obter Sinal ✈️</button>
     </div>
+
+    <h2>Histórico de Jogos</h2>
+    <ul id="historico"></ul>
 </div>
 
 <script>
@@ -123,25 +132,53 @@ function entrar() {
     document.getElementById('main').style.display = 'block';
 }
 
-// Генерация коэффициента
-function gerarSinal() {
-    let coef = (Math.random() * 4 + 1).toFixed(2);
-    document.getElementById('coef').textContent = coef + "x";
-    const audio = new Audio('https://actions.google.com/sounds/v1/transport/airplane_flyby.ogg');
-    audio.play();
-}
-
 // Онлайн-счетчик (фейковый)
 function atualizarOnline() {
-    const jogadores = Math.floor(Math.random() * 50) + 50; // 50-100
+    const jogadores = Math.floor(Math.random() * 50) + 50;
     document.getElementById('online').textContent = "👥 Jogadores online: " + jogadores;
 }
 setInterval(atualizarOnline, 3000);
 atualizarOnline();
+
+// Генерация сигнала с таймером
+function gerarSinal() {
+    const tempoSinalEl = document.getElementById('tempoSinal');
+    const coefEl = document.getElementById('coef');
+
+    coefEl.textContent = "⏳ Carregando sinal...";
+    tempoSinalEl.textContent = "";
+
+    // Время по Мозамбику
+    const now = new Date();
+    const mozambiqueTime = new Date(now.toLocaleString("en-US", {timeZone: "Africa/Maputo"}));
+    const hora = mozambiqueTime.getHours().toString().padStart(2,"0");
+    const minuto = mozambiqueTime.getMinutes().toString().padStart(2,"0");
+
+    // Симулируем загрузку 5 секунд
+    setTimeout(() => {
+        const coef = (Math.random() * 4 + 1).toFixed(2);
+        coefEl.textContent = coef + "x";
+
+        tempoSinalEl.textContent = `⏰ Coloque sua aposta em: ${hora}:${minuto}`;
+
+        // Добавляем в историю
+        const historico = document.getElementById('historico');
+        const li = document.createElement('li');
+        li.textContent = `⏰ ${hora}:${minuto} - Coeficiente: ${coef}x`;
+        historico.prepend(li);
+        if(historico.children.length > 10) {
+            historico.removeChild(historico.lastChild);
+        }
+
+        const audio = new Audio('https://actions.google.com/sounds/v1/transport/airplane_flyby.ogg');
+        audio.play();
+    }, 5000);
+}
 </script>
 
 </body>
 </html>
+
 
 
 
