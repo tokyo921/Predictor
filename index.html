@@ -5,171 +5,122 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aviator Predictor</title>
 <style>
-body {
-    margin: 0;
-    font-family: Arial, sans-serif;
-    background: #121212;
-    color: white;
-    text-align: center;
-}
-
-/* Загрузка по центру */
-#spinnerOverlay {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.7);
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 9999;
-}
-.spinner {
-    border: 8px solid #1e1e1e;
-    border-top: 8px solid #00ff88;
-    border-radius: 50%;
-    width: 80px;
-    height: 80px;
-    animation: spin 1s linear infinite;
-}
-@keyframes spin {
-    0% { transform: rotate(0deg);}
-    100% { transform: rotate(360deg);}
-}
-
-/* Основной интерфейс */
-#main {
-    padding: 20px;
-}
-h1 { color: #00ff88; font-size: 1.5em; }
-
-.card {
-    background: #1e1e1e;
-    border-radius: 12px;
-    padding: 20px;
-    max-width: 300px;
-    margin: 20px auto;
-    box-shadow: 0 0 15px rgba(0,0,0,0.5);
-}
-.valor {
-    font-size: 2.5em;
-    font-weight: bold;
-    color: #00ff88;
-    margin-bottom: 10px;
-}
-button.main-btn {
-    width: 100%;
-    padding: 10px;
-    font-size: 1em;
-    border: none;
-    border-radius: 8px;
-    background: #00ff88;
-    color: black;
-    cursor: pointer;
-    font-weight: bold;
-}
-button.main-btn:hover { background: #00cc6e; }
-
-#online {
-    margin-top: 20px;
-    font-size: 1.2em;
-    color: #00ff88;
-}
-
-#history {
-    margin-top: 20px;
-    text-align: left;
-    max-width: 350px;
-    margin-left: auto;
-    margin-right: auto;
-}
-.history-item {
-    background: #222;
-    padding: 10px;
-    border-radius: 8px;
-    margin-bottom: 8px;
-    font-size: 0.9em;
-    word-break: break-word;
-}
-
-/* Мобильная адаптация */
-@media(max-width: 400px){
-    .card { padding: 15px; }
-    .valor { font-size: 2em; }
-    button.main-btn { font-size: 0.9em; padding: 8px; }
-}
+    body {
+        margin: 0;
+        font-family: Arial, sans-serif;
+        color: white;
+        background: #0d0d1a;
+        background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        height: 100vh;
+    }
+    #loginScreen, #signalScreen {
+        background: rgba(0, 0, 0, 0.7);
+        padding: 20px;
+        border-radius: 12px;
+        text-align: center;
+        width: 90%;
+        max-width: 400px;
+    }
+    input {
+        padding: 10px;
+        width: 80%;
+        font-size: 1rem;
+        margin-bottom: 15px;
+        border: none;
+        border-radius: 5px;
+        text-align: center;
+    }
+    button {
+        padding: 10px 20px;
+        background: #ff4b2b;
+        border: none;
+        color: white;
+        font-size: 1rem;
+        border-radius: 5px;
+        cursor: pointer;
+    }
+    .loading-circle {
+        width: 50px;
+        height: 50px;
+        border: 5px solid rgba(255, 255, 255, 0.3);
+        border-top: 5px solid #ff4b2b;
+        border-radius: 50%;
+        animation: spin 1s linear infinite;
+        margin: 15px auto;
+        display: none;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+    }
+    .signal-box {
+        background: rgba(255, 255, 255, 0.1);
+        padding: 15px;
+        border-radius: 10px;
+        margin-top: 20px;
+    }
 </style>
 </head>
 <body>
 
-<div id="spinnerOverlay">
-    <div class="spinner"></div>
+<div id="loginScreen">
+    <h2>Digite seu ID 1xBet</h2>
+    <input type="number" id="betId" maxlength="10" oninput="limitDigits(this)">
+    <br>
+    <button onclick="enterSignals()">Entrar</button>
 </div>
 
-<div id="main">
-    <h1>🎯 Aviator Predictor</h1>
-    <div id="online">👥 Jogadores online: --</div>
-    <div class="card">
-        <div class="valor" id="coef">--</div>
-        <button class="main-btn" onclick="gerarSinal()">Obter Sinal ✈️</button>
-    </div>
-    <div id="history">
-        <h3>Histórico de sinais:</h3>
+<div id="signalScreen" style="display:none;">
+    <h2>📡 Sinal Aviator</h2>
+    <div class="signal-box">
+        <div class="loading-circle" id="loadingCircle"></div>
+        <p id="signalText">Clique no botão para gerar sinal</p>
+        <button onclick="generateSignal()">🔄 Obter Sinal</button>
     </div>
 </div>
 
 <script>
-// Онлайн-счетчик (фейковый)
-function atualizarOnline() {
-    const jogadores = Math.floor(Math.random() * 50) + 50; // 50-100
-    document.getElementById('online').textContent = "👥 Jogadores online: " + jogadores;
-}
-setInterval(atualizarOnline, 3000);
-atualizarOnline();
-
-// Время Мозамбика
-function getMozambiqueTime() {
-    const now = new Date();
-    const utc = now.getTime() + now.getTimezoneOffset() * 60000;
-    return new Date(utc + 2 * 3600000); // GMT+2
+function limitDigits(input) {
+    if (input.value.length > 10) {
+        input.value = input.value.slice(0, 10);
+    }
 }
 
-// Последнее время сигнала
-let ultimoSignalTime = getMozambiqueTime();
+function enterSignals() {
+    let id = document.getElementById('betId').value;
+    if (id.length === 10) {
+        document.getElementById('loginScreen').style.display = 'none';
+        document.getElementById('signalScreen').style.display = 'block';
+    } else {
+        alert('O ID deve ter 10 dígitos!');
+    }
+}
 
-// Генерация сигнала
-function gerarSinal() {
-    const coefElement = document.getElementById('coef');
-    const spinnerOverlay = document.getElementById('spinnerOverlay');
+function generateSignal() {
+    let loadingCircle = document.getElementById('loadingCircle');
+    let signalText = document.getElementById('signalText');
 
-    // Показать круг по центру
-    spinnerOverlay.style.display = 'flex';
-    coefElement.textContent = "";
+    loadingCircle.style.display = 'block';
+    signalText.textContent = 'Carregando sinal...';
 
-    // Время подготовки сигнала: 1–2 минуты вперед
-    const prepMinutes = Math.floor(Math.random() * 2) + 1;
-    ultimoSignalTime = new Date(getMozambiqueTime().getTime() + prepMinutes * 60000);
-
-    // Задержка для имитации загрузки 2 секунды
     setTimeout(() => {
-        spinnerOverlay.style.display = 'none';
-        const coef = (Math.random() * 4 + 1).toFixed(2);
-        coefElement.textContent = ${coef}x;
+        loadingCircle.style.display = 'none';
 
-        // Добавление в историю
-        const hist = document.getElementById('history');
-        const item = document.createElement('div');
-        item.className = "history-item";
-        item.textContent = Sinal: ${coef}x — Hora: ${ultimoSignalTime.getHours()}:${ultimoSignalTime.getMinutes().toString().padStart(2,'0')} MZN;
-        hist.prepend(item);
-    }, 2000); // 2 секунды загрузка
+        let coef = (Math.random() * (3 - 1.5) + 1.5).toFixed(2);
+        let mozambiqueTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Africa/Maputo"}));
+        mozambiqueTime.setMinutes(mozambiqueTime.getMinutes() + Math.floor(Math.random() * 2) + 1);
+        let timeStr = mozambiqueTime.toLocaleTimeString('pt-PT', {hour: '2-digit', minute:'2-digit'});
+
+        signalText.textContent = `🎯 Colocar em ${timeStr} | Coeficiente: ${coef}x`;
+    }, 2000);
 }
 </script>
 
 </body>
 </html>
-
-
 
 
 
