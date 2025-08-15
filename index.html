@@ -107,7 +107,7 @@ button.main-btn:hover { background: #00cc6e; }
     height: 100%;
     width: 0%;
     background: #00ff88;
-    transition: width 0.2s;
+    transition: width 0.1s;
 }
 </style>
 </head>
@@ -135,6 +135,8 @@ button.main-btn:hover { background: #00cc6e; }
 
     <h2>Histórico de Jogos</h2>
     <ul id="historico"></ul>
+
+    <audio id="audioSinal" src="https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg"></audio>
 </div>
 
 <script>
@@ -165,37 +167,37 @@ function atualizarOnline() {
 setInterval(atualizarOnline, 3000);
 atualizarOnline();
 
-// Генерация сигнала с прогресс-баром и случайным временем
+// Генерация сигнала за 5 секунд с полоской и звуком
 function gerarSinal() {
     const coefEl = document.getElementById('coef');
     const tempoSinalEl = document.getElementById('tempoSinal');
     const progressEl = document.getElementById('progress');
+    const audio = document.getElementById('audioSinal');
 
     coefEl.textContent = "⏳ Preparando sinal...";
     tempoSinalEl.textContent = "";
     progressEl.style.width = "0%";
 
-    // Случайный таймер 2-5 минут в миллисекундах
-    const delay = (Math.floor(Math.random() * (300 - 120 + 1)) + 120) * 1000;
-    let start = null;
+    const duration = 5000; // 5 секунд
+    const start = Date.now();
 
-    function animateProgress(timestamp) {
-        if (!start) start = timestamp;
-        const progress = Math.min((timestamp - start) / delay * 100, 100);
-        progressEl.style.width = progress + "%";
-        if (progress < 100) {
-            requestAnimationFrame(animateProgress);
-        }
-    }
-    requestAnimationFrame(animateProgress);
+    const interval = setInterval(() => {
+        const elapsed = Date.now() - start;
+        const percent = Math.min((elapsed / duration) * 100, 100);
+        progressEl.style.width = percent + "%";
+        if(percent >= 100) clearInterval(interval);
+    }, 50);
 
     setTimeout(() => {
+        // Генерируем коэффициент
         const coef = (Math.random() * 4 + 1).toFixed(2);
         coefEl.textContent = coef + "x";
 
-        // Время по Мозамбику
+        // Время для ставки по Мозамбику через случайные 2–5 минут
+        const delayMinutes = Math.floor(Math.random() * (5 - 2 + 1)) + 2;
         const now = new Date();
         const mozTime = new Date(now.toLocaleString("en-US", {timeZone: "Africa/Maputo"}));
+        mozTime.setMinutes(mozTime.getMinutes() + delayMinutes);
         const hora = mozTime.getHours().toString().padStart(2,"0");
         const minuto = mozTime.getMinutes().toString().padStart(2,"0");
 
@@ -208,9 +210,10 @@ function gerarSinal() {
         historico.prepend(li);
         if(historico.children.length > 10) historico.removeChild(historico.lastChild);
 
-        const audio = new Audio('https://actions.google.com/sounds/v1/transport/airplane_flyby.ogg');
+        // Воспроизвести звук
+        audio.currentTime = 0;
         audio.play();
-    }, delay);
+    }, duration);
 }
 </script>
 
