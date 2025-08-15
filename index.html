@@ -5,140 +5,105 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aviator Predictor</title>
 <style>
-    body {
-        margin: 0;
-        font-family: Arial, sans-serif;
-        background: #121212;
-        color: white;
-        text-align: center;
-    }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #121212;
+    color: white;
+    text-align: center;
+}
 
-    /* Загрузка */
-    #loading {
-        position: fixed;
-        top:0; left:0; width:100%; height:100%;
-        background: #121212;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-    }
-    .spinner {
-        border: 8px solid #1e1e1e;
-        border-top: 8px solid #00ff88;
-        border-radius: 50%;
-        width: 80px;
-        height: 80px;
-        animation: spin 1s linear infinite;
-    }
-    @keyframes spin {
-        0% { transform: rotate(0deg);}
-        100% { transform: rotate(360deg);}
-    }
+/* Загрузка по центру */
+#spinnerOverlay {
+    position: fixed;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
+    background: rgba(0,0,0,0.7);
+    display: none;
+    justify-content: center;
+    align-items: center;
+    z-index: 9999;
+}
+.spinner {
+    border: 8px solid #1e1e1e;
+    border-top: 8px solid #00ff88;
+    border-radius: 50%;
+    width: 80px;
+    height: 80px;
+    animation: spin 1s linear infinite;
+}
+@keyframes spin {
+    0% { transform: rotate(0deg);}
+    100% { transform: rotate(360deg);}
+}
 
-    #login {
-        display: none;
-        margin-top: 50px;
-        padding: 0 10px;
-    }
-    #login input {
-        width: 80%;
-        max-width: 250px;
-        padding: 10px;
-        border-radius: 8px;
-        border: none;
-        text-align: center;
-        font-size: 1em;
-        margin-bottom: 10px;
-    }
-    #login button {
-        width: 80%;
-        max-width: 250px;
-        padding: 10px;
-        border-radius: 8px;
-        border: none;
-        background: #00ff88;
-        color: black;
-        font-weight: bold;
-        cursor: pointer;
-        margin-bottom: 10px;
-    }
+/* Основной интерфейс */
+#main {
+    padding: 20px;
+}
+h1 { color: #00ff88; font-size: 1.5em; }
 
-    #main {
-        display: none;
-        padding: 20px 10px;
-    }
+.card {
+    background: #1e1e1e;
+    border-radius: 12px;
+    padding: 20px;
+    max-width: 300px;
+    margin: 20px auto;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+.valor {
+    font-size: 2.5em;
+    font-weight: bold;
+    color: #00ff88;
+    margin-bottom: 10px;
+}
+button.main-btn {
+    width: 100%;
+    padding: 10px;
+    font-size: 1em;
+    border: none;
+    border-radius: 8px;
+    background: #00ff88;
+    color: black;
+    cursor: pointer;
+    font-weight: bold;
+}
+button.main-btn:hover { background: #00cc6e; }
 
-    h1 { color: #00ff88; font-size: 1.5em; }
+#online {
+    margin-top: 20px;
+    font-size: 1.2em;
+    color: #00ff88;
+}
 
-    .card {
-        background: #1e1e1e;
-        border-radius: 12px;
-        padding: 20px;
-        max-width: 300px;
-        margin: 20px auto;
-        box-shadow: 0 0 15px rgba(0,0,0,0.5);
-    }
-    .valor {
-        font-size: 2.5em;
-        font-weight: bold;
-        color: #00ff88;
-        margin-bottom: 10px;
-    }
-    button.main-btn {
-        width: 100%;
-        padding: 10px;
-        font-size: 1em;
-        border: none;
-        border-radius: 8px;
-        background: #00ff88;
-        color: black;
-        cursor: pointer;
-        font-weight: bold;
-    }
-    button.main-btn:hover { background: #00cc6e; }
+#history {
+    margin-top: 20px;
+    text-align: left;
+    max-width: 350px;
+    margin-left: auto;
+    margin-right: auto;
+}
+.history-item {
+    background: #222;
+    padding: 10px;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    font-size: 0.9em;
+    word-break: break-word;
+}
 
-    #online {
-        margin-top: 20px;
-        font-size: 1.2em;
-        color: #00ff88;
-    }
-
-    #history {
-        margin-top: 20px;
-        text-align: left;
-        max-width: 350px;
-        margin-left: auto;
-        margin-right: auto;
-    }
-    .history-item {
-        background: #222;
-        padding: 10px;
-        border-radius: 8px;
-        margin-bottom: 8px;
-        font-size: 0.9em;
-        word-break: break-word;
-    }
-
-    /* Мобильная адаптация */
-    @media(max-width: 400px){
-        .card { padding: 15px; }
-        .valor { font-size: 2em; }
-        button.main-btn { font-size: 0.9em; padding: 8px; }
-    }
+/* Мобильная адаптация */
+@media(max-width: 400px){
+    .card { padding: 15px; }
+    .valor { font-size: 2em; }
+    button.main-btn { font-size: 0.9em; padding: 8px; }
+}
 </style>
 </head>
 <body>
 
-<div id="loading">
+<div id="spinnerOverlay">
     <div class="spinner"></div>
-</div>
-
-<div id="login">
-    <h1>Digite seu ID 1xBet</h1>
-    <input type="text" id="userID" maxlength="10" placeholder="Somente números">
-    <button onclick="entrar()">Entrar</button>
-    <p id="erro" style="color:red;"></p>
 </div>
 
 <div id="main">
@@ -154,25 +119,6 @@
 </div>
 
 <script>
-// Загрузка 2 секунды
-setTimeout(() => {
-    document.getElementById('loading').style.display = 'none';
-    document.getElementById('login').style.display = 'block';
-}, 2000);
-
-// Вход по ID
-function entrar() {
-    const id = document.getElementById('userID').value;
-    const erro = document.getElementById('erro');
-    if(!/^\d{1,10}$/.test(id)){
-        erro.textContent = "ID inválido. Digite até 10 números.";
-        return;
-    }
-    erro.textContent = "";
-    document.getElementById('login').style.display = 'none';
-    document.getElementById('main').style.display = 'block';
-}
-
 // Онлайн-счетчик (фейковый)
 function atualizarOnline() {
     const jogadores = Math.floor(Math.random() * 50) + 50; // 50-100
@@ -194,13 +140,19 @@ let ultimoSignalTime = getMozambiqueTime();
 // Генерация сигнала
 function gerarSinal() {
     const coefElement = document.getElementById('coef');
-    coefElement.innerHTML = `<div class="spinner"></div>`; // Круг по центру
+    const spinnerOverlay = document.getElementById('spinnerOverlay');
+
+    // Показать круг по центру
+    spinnerOverlay.style.display = 'flex';
+    coefElement.textContent = "";
 
     // Время подготовки сигнала: 1–2 минуты вперед
     const prepMinutes = Math.floor(Math.random() * 2) + 1;
-    ultimoSignalTime = new Date(ultimoSignalTime.getTime() + prepMinutes * 60000);
+    ultimoSignalTime = new Date(getMozambiqueTime().getTime() + prepMinutes * 60000);
 
+    // Задержка для имитации загрузки 2 секунды
     setTimeout(() => {
+        spinnerOverlay.style.display = 'none';
         const coef = (Math.random() * 4 + 1).toFixed(2);
         coefElement.textContent = `${coef}x`;
 
@@ -216,6 +168,7 @@ function gerarSinal() {
 
 </body>
 </html>
+
 
 
 
