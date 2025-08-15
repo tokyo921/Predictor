@@ -12,6 +12,8 @@
         color: white;
         text-align: center;
     }
+
+    /* Загрузка */
     #loading {
         position: fixed;
         top:0; left:0; width:100%; height:100%;
@@ -33,33 +35,42 @@
         0% { transform: rotate(0deg);}
         100% { transform: rotate(360deg);}
     }
+
     #login {
         display: none;
         margin-top: 50px;
+        padding: 0 10px;
     }
     #login input {
-        width: 200px;
+        width: 80%;
+        max-width: 250px;
         padding: 10px;
         border-radius: 8px;
         border: none;
         text-align: center;
         font-size: 1em;
-        margin-right: 10px;
+        margin-bottom: 10px;
     }
     #login button {
-        padding: 10px 20px;
+        width: 80%;
+        max-width: 250px;
+        padding: 10px;
         border-radius: 8px;
         border: none;
         background: #00ff88;
         color: black;
         font-weight: bold;
         cursor: pointer;
+        margin-bottom: 10px;
     }
+
     #main {
         display: none;
-        padding: 20px;
+        padding: 20px 10px;
     }
-    h1 { color: #00ff88; }
+
+    h1 { color: #00ff88; font-size: 1.5em; }
+
     .card {
         background: #1e1e1e;
         border-radius: 12px;
@@ -75,8 +86,8 @@
         margin-bottom: 10px;
     }
     button.main-btn {
-        margin: 10px 0;
-        padding: 10px 20px;
+        width: 100%;
+        padding: 10px;
         font-size: 1em;
         border: none;
         border-radius: 8px;
@@ -86,11 +97,13 @@
         font-weight: bold;
     }
     button.main-btn:hover { background: #00cc6e; }
+
     #online {
         margin-top: 20px;
         font-size: 1.2em;
         color: #00ff88;
     }
+
     #history {
         margin-top: 20px;
         text-align: left;
@@ -104,6 +117,14 @@
         border-radius: 8px;
         margin-bottom: 8px;
         font-size: 0.9em;
+        word-break: break-word;
+    }
+
+    /* Мобильная адаптация */
+    @media(max-width: 400px){
+        .card { padding: 15px; }
+        .valor { font-size: 2em; }
+        button.main-btn { font-size: 0.9em; padding: 8px; }
     }
 </style>
 </head>
@@ -133,7 +154,7 @@
 </div>
 
 <script>
-// Экран загрузки
+// Загрузка 2 секунды
 setTimeout(() => {
     document.getElementById('loading').style.display = 'none';
     document.getElementById('login').style.display = 'block';
@@ -173,20 +194,15 @@ let ultimoSignalTime = getMozambiqueTime();
 // Генерация сигнала
 function gerarSinal() {
     const coefElement = document.getElementById('coef');
-    coefElement.innerHTML = `<div class="spinner"></div>`; // Показываем анимированный круг
+    coefElement.innerHTML = `<div class="spinner"></div>`; // Круг по центру
 
-    // Случайное время подготовки сигнала: 2–5 минут вперед от последнего сигнала
-    const prepMinutes = Math.floor(Math.random() * 4) + 2;
+    // Время подготовки сигнала: 1–2 минуты вперед
+    const prepMinutes = Math.floor(Math.random() * 2) + 1;
     ultimoSignalTime = new Date(ultimoSignalTime.getTime() + prepMinutes * 60000);
-
-    // Звуковое уведомление (приятный звук)
-    const audio = new Audio('https://actions.google.com/sounds/v1/cartoon/clang.ogg');
-    audio.volume = 0.5;
 
     setTimeout(() => {
         const coef = (Math.random() * 4 + 1).toFixed(2);
-        coefElement.textContent = `${coef}x`; // Показываем коэффициент
-        audio.play();
+        coefElement.textContent = `${coef}x`;
 
         // Добавление в историю
         const hist = document.getElementById('history');
@@ -200,6 +216,7 @@ function gerarSinal() {
 
 </body>
 </html>
+
 
 
 
