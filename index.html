@@ -19,10 +19,19 @@
         display: flex;
         justify-content: center;
         align-items: center;
-        flex-direction: column;
         z-index: 9999;
-        font-size: 1.5em;
-        color: #00ff88;
+    }
+    .spinner {
+        border: 8px solid #1e1e1e;
+        border-top: 8px solid #00ff88;
+        border-radius: 50%;
+        width: 80px;
+        height: 80px;
+        animation: spin 1s linear infinite;
+    }
+    @keyframes spin {
+        0% { transform: rotate(0deg);}
+        100% { transform: rotate(360deg);}
     }
     #login {
         display: none;
@@ -100,7 +109,9 @@
 </head>
 <body>
 
-<div id="loading">🎮 Carregando...</div>
+<div id="loading">
+    <div class="spinner"></div>
+</div>
 
 <div id="login">
     <h1>Digite seu ID 1xBet</h1>
@@ -156,30 +167,32 @@ function getMozambiqueTime() {
     return new Date(utc + 2 * 3600000); // GMT+2
 }
 
+// Последнее время сигнала
+let ultimoSignalTime = getMozambiqueTime();
+
 // Генерация сигнала
 function gerarSinal() {
     const coefElement = document.getElementById('coef');
-    coefElement.textContent = "Carregando...";
-    
-    // Случайное время подготовки сигнала: 2–5 минут вперед
-    const prepMinutes = Math.floor(Math.random() * 4) + 2;
-    const signalTime = new Date(getMozambiqueTime().getTime() + prepMinutes * 60000);
+    coefElement.innerHTML = `<div class="spinner"></div>`; // Показываем анимированный круг
 
-    // Звуковое уведомление (женский голос/мелодия)
-    const audio = new Audio('https://actions.google.com/sounds/v1/cartoon/clang_and_wobble.ogg');
+    // Случайное время подготовки сигнала: 2–5 минут вперед от последнего сигнала
+    const prepMinutes = Math.floor(Math.random() * 4) + 2;
+    ultimoSignalTime = new Date(ultimoSignalTime.getTime() + prepMinutes * 60000);
+
+    // Звуковое уведомление (приятный звук)
+    const audio = new Audio('https://actions.google.com/sounds/v1/cartoon/clang.ogg');
     audio.volume = 0.5;
 
     setTimeout(() => {
         const coef = (Math.random() * 4 + 1).toFixed(2);
-        coefElement.textContent = `${coef}x`;
-        coefElement.innerHTML += `<br>⏰ Apostar às ${signalTime.getHours()}:${signalTime.getMinutes().toString().padStart(2,'0')} MZN`;
+        coefElement.textContent = `${coef}x`; // Показываем коэффициент
         audio.play();
 
         // Добавление в историю
         const hist = document.getElementById('history');
         const item = document.createElement('div');
         item.className = "history-item";
-        item.textContent = `Sinal: ${coef}x — Hora: ${signalTime.getHours()}:${signalTime.getMinutes().toString().padStart(2,'0')} MZN`;
+        item.textContent = `Sinal: ${coef}x — Hora: ${ultimoSignalTime.getHours()}:${ultimoSignalTime.getMinutes().toString().padStart(2,'0')} MZN`;
         hist.prepend(item);
     }, 2000); // 2 секунды загрузка
 }
@@ -187,6 +200,7 @@ function gerarSinal() {
 
 </body>
 </html>
+
 
 
 
