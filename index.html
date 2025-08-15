@@ -5,252 +5,119 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Aviator Predictor</title>
 <style>
-    body {
+    body, html {
         margin: 0;
+        padding: 0;
         font-family: Arial, sans-serif;
-        background: url('https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+        height: 100%;
+        background: url('5223e3ee-23eb-4497-b4d1-d175905dc55e.png') no-repeat center center fixed;
         background-size: cover;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+    }
+    #login-container, #signal-container {
+        background: rgba(0, 0, 0, 0.7);
+        padding: 20px;
+        border-radius: 15px;
         color: white;
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        height: 100vh;
-        flex-direction: column;
-        overflow: hidden;
-    }
-
-    /* Модальное окно для ID */
-    #modal {
-        position: fixed;
-        top:0; left:0; width:100%; height:100%;
-        background: rgba(0,0,0,0.9);
-        display: flex;
-        justify-content: center;
-        align-items: center;
-        z-index: 9999;
-        flex-direction: column;
         text-align: center;
+        width: 90%;
+        max-width: 400px;
     }
-    #modalContent {
-        background: rgba(30,30,30,0.95);
-        padding: 30px;
-        border-radius: 12px;
-        box-shadow: 0 0 20px rgba(0,255,136,0.5);
-    }
-    #modal input {
-        width: 200px;
+    input[type="text"] {
+        width: 80%;
         padding: 10px;
-        font-size: 1em;
-        border-radius: 8px;
+        font-size: 18px;
+        margin-bottom: 10px;
+        border-radius: 10px;
         border: none;
-        margin-top: 10px;
-        text-align: center;
     }
-    #modal button {
-        margin-top: 15px;
+    button {
         padding: 10px 20px;
-        border-radius: 8px;
+        font-size: 18px;
+        border-radius: 10px;
         border: none;
-        background: #00ff88;
-        color: black;
-        font-weight: bold;
+        background-color: #ff9900;
+        color: white;
         cursor: pointer;
     }
-
-    /* Основная карточка сигналов */
-    #mainCard {
-        display: none;
-        background: rgba(30,30,30,0.95);
-        padding: 30px;
-        border-radius: 12px;
-        text-align: center;
-        box-shadow: 0 0 20px rgba(0,255,136,0.5);
-        width: 90%;
-        max-width: 350px;
-        position: relative;
-    }
-
-    /* Квадрат с сигналом и анимацией */
-    #signalBox {
-        width: 150px;
-        height: 150px;
-        margin: 20px auto;
-        border: 3px solid #00ff88;
-        border-radius: 12px;
+    #signal-box {
+        margin-top: 20px;
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 15px;
+        padding: 20px;
+        min-height: 120px;
         display: flex;
         justify-content: center;
         align-items: center;
+        font-size: 22px;
         position: relative;
-        overflow: hidden;
-        background: rgba(0,0,0,0.3);
     }
-
-    /* Анимация загрузки круга */
-    .loader {
-        border: 5px solid rgba(30,30,30,0.5);
-        border-top: 5px solid #00ff88;
+    .loader-circle {
+        border: 5px solid rgba(255,255,255,0.2);
+        border-top: 5px solid #fff;
         border-radius: 50%;
         width: 60px;
         height: 60px;
         animation: spin 2s linear infinite;
         position: absolute;
     }
-
     @keyframes spin {
         0% { transform: rotate(0deg);}
         100% { transform: rotate(360deg);}
-    }
-
-    #signalText {
-        font-size: 1.5em;
-        font-weight: bold;
-        z-index: 2;
-    }
-
-    /* История сигналов */
-    #history {
-        display: none;
-        margin-top: 20px;
-        max-height: 150px;
-        overflow-y: auto;
-        background: rgba(0,0,0,0.5);
-        padding: 10px;
-        border-radius: 8px;
-    }
-    .historyItem {
-        padding: 5px;
-        border-bottom: 1px solid #00ff88;
-    }
-
-    /* Кнопка генерации */
-    #generateBtn {
-        margin-top: 10px;
-        padding: 10px 20px;
-        border-radius: 8px;
-        border: none;
-        background: #00ff88;
-        color: black;
-        font-weight: bold;
-        cursor: pointer;
-    }
-
-    /* Анимация самолёта */
-    #plane {
-        position: absolute;
-        width: 50px;
-        top: 20%;
-        left: -60px;
-        z-index: 1;
-        animation: fly 10s linear infinite;
-    }
-
-    @keyframes fly {
-        0% { left: -60px; transform: rotate(0deg);}
-        50% { left: 80%; transform: rotate(10deg);}
-        100% { left: 100%; transform: rotate(0deg);}
-    }
-
-    @media(max-width: 400px){
-        #mainCard {
-            width: 95%;
-            padding: 20px;
-        }
-        #signalBox {
-            width: 120px;
-            height: 120px;
-        }
-        .loader {
-            width: 50px;
-            height: 50px;
-        }
-        #plane {
-            width: 35px;
-        }
     }
 </style>
 </head>
 <body>
 
-<!-- Модальное окно ID -->
-<div id="modal">
-    <div id="modalContent">
-        <h2>Digite seu 1xBet ID</h2>
-        <input type="text" id="userID" placeholder="Somente números" maxlength="10" oninput="this.value=this.value.replace(/[^0-9]/g,'')">
-        <br>
-        <button onclick="confirmID()">Confirmar</button>
-    </div>
+<div id="login-container">
+    <h2>Digite seu 1xBet ID</h2>
+    <input type="text" id="userID" maxlength="10" placeholder="10 dígitos" />
+    <button onclick="enterSite()">Entrar</button>
 </div>
 
-<!-- Основная карточка сигналов -->
-<div id="mainCard">
-    <h1>Aviator Predictor</h1>
-    <img src="https://cdn-icons-png.flaticon.com/512/684/684908.png" alt="plane" id="plane">
-    <div id="signalBox">
-        <div class="loader" id="loader" style="display:none;"></div>
-        <div id="signalText">--</div>
+<div id="signal-container" style="display:none;">
+    <h2>Sinais Aviator</h2>
+    <div id="signal-box">
+        <div class="loader-circle"></div>
+        <span id="signal-text"></span>
     </div>
-    <button id="generateBtn" onclick="gerarSinal()">Obter Sinal</button>
-
-    <div id="history">
-        <h3>Histórico de sinais:</h3>
-    </div>
+    <button onclick="generateSignal()">Novo Sinal</button>
 </div>
 
 <script>
-let lastSignalTime = null;
-
-// Подтверждение ID
-function confirmID() {
-    const input = document.getElementById('userID');
-    if(input.value.trim().length === 10){
-        document.getElementById('modal').style.display = "none";
-        document.getElementById('mainCard').style.display = "block";
-        document.getElementById('history').style.display = "block";
+function enterSite() {
+    const userID = document.getElementById('userID').value;
+    if(userID.length === 10 && /^\d+$/.test(userID)) {
+        document.getElementById('login-container').style.display = 'none';
+        document.getElementById('signal-container').style.display = 'block';
     } else {
-        alert("Por favor, digite um ID válido de 10 dígitos.");
+        alert('Insira um ID válido de 10 dígitos.');
     }
 }
 
-// Генерация сигнала
-function gerarSinal(){
-    const loader = document.getElementById('loader');
-    const signalText = document.getElementById('signalText');
-
-    loader.style.display = "block";
-    signalText.textContent = "--";
-
+function generateSignal() {
+    const signalBox = document.getElementById('signal-box');
+    const signalText = document.getElementById('signal-text');
+    signalText.textContent = '';
+    
+    // Loader animation por 2 segundos
+    signalBox.querySelector('.loader-circle').style.display = 'block';
     setTimeout(() => {
-        loader.style.display = "none";
-
-        // Генерируем сигнал на 1-2 минуты вперед
+        signalBox.querySelector('.loader-circle').style.display = 'none';
+        const minutesAhead = Math.floor(Math.random() * 2) + 1; // 1-2 minutos
         const now = new Date();
-        let offset = Math.floor(Math.random() * 2 + 1); // 1-2 минуты
-        let signalTime = new Date(now.getTime() + offset * 60000);
-
-        // Если предыдущий сигнал больше текущего, корректируем
-        if(lastSignalTime && signalTime <= lastSignalTime){
-            signalTime = new Date(lastSignalTime.getTime() + 60000); // +1 минута
-        }
-
-        lastSignalTime = signalTime;
-
-        const minutes = signalTime.getMinutes().toString().padStart(2,'0');
-        const hours = signalTime.getHours().toString().padStart(2,'0');
-
-        signalText.textContent = `${hours}:${minutes}`;
-
-        // Добавляем в историю
-        const hist = document.createElement('div');
-        hist.className = "historyItem";
-        hist.textContent = `Sinal para ${hours}:${minutes}`;
-        const historyDiv = document.getElementById('history');
-        historyDiv.prepend(hist);
-    }, 2000); // Загрузка 2 секунды
+        now.setMinutes(now.getMinutes() + minutesAhead);
+        const timeString = now.getHours().toString().padStart(2,'0') + ':' + now.getMinutes().toString().padStart(2,'0');
+        const coef = (Math.random() * (5 - 1.5) + 1.5).toFixed(2); // coeficiente aleatório entre 1.5 e 5
+        signalText.textContent = `📌 Aposte às ${timeString} | Coeficiente: ${coef}`;
+    }, 2000);
 }
 </script>
+
 </body>
 </html>
-
 
 
 
