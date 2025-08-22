@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="pt">
+<html lang="ar">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Aviator Predictor</title>
+<title>متنبّئ Aviator</title>
 <style>
     body {
         margin: 0;
@@ -15,12 +15,13 @@
         justify-content: center;
         align-items: center;
         height: 100vh;
+        direction: rtl;
+        text-align: center;
     }
     #loginScreen, #signalScreen {
         background: rgba(0, 0, 0, 0.7);
         padding: 20px;
         border-radius: 12px;
-        text-align: center;
         width: 90%;
         max-width: 400px;
     }
@@ -67,18 +68,18 @@
 <body>
 
 <div id="loginScreen">
-    <h2>Digite seu ID 1xBet</h2>
+    <h2>✍️ دخّل رقم ID متاعك 1xBet</h2>
     <input type="number" id="betId" maxlength="10" oninput="limitDigits(this)">
     <br>
-    <button onclick="enterSignals()">Entrar</button>
+    <button onclick="enterSignals()">دخول</button>
 </div>
 
 <div id="signalScreen" style="display:none;">
-    <h2>📡 Sinal Aviator</h2>
+    <h2>📡 إشارة Aviator</h2>
     <div class="signal-box">
         <div class="loading-circle" id="loadingCircle"></div>
-        <p id="signalText">Clique no botão para gerar sinal</p>
-        <button onclick="generateSignal()">🔄 Obter Sinal</button>
+        <p id="signalText">إضغط عالزر باش تولّي عندك الإشارة</p>
+        <button onclick="generateSignal()">🔄 خُذ الإشارة</button>
     </div>
 </div>
 
@@ -95,7 +96,7 @@ function enterSignals() {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('signalScreen').style.display = 'block';
     } else {
-        alert('O ID deve ter 10 dígitos!');
+        alert('📌 ال‑ID لازم يكون فيه 10 أرقام بالضبط!');
     }
 }
 
@@ -104,25 +105,20 @@ function generateSignal() {
     let signalText = document.getElementById('signalText');
 
     loadingCircle.style.display = 'block';
-    signalText.textContent = 'Carregando sinal...';
+    signalText.textContent = '⏳ الإشارة قاعدة تتحضّر...';
 
     setTimeout(() => {
         loadingCircle.style.display = 'none';
 
         let coef = (Math.random() * (3 - 1.5) + 1.5).toFixed(2);
-        let mozambiqueTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Africa/Maputo"}));
-        mozambiqueTime.setMinutes(mozambiqueTime.getMinutes() + Math.floor(Math.random() * 2) + 1);
-        let timeStr = mozambiqueTime.toLocaleTimeString('pt-PT', {hour: '2-digit', minute:'2-digit'});
+        let tunisTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Africa/Tunis"}));
+        tunisTime.setMinutes(tunisTime.getMinutes() + Math.floor(Math.random() * 2) + 1);
+        let timeStr = tunisTime.toLocaleTimeString('ar-TN', {hour: '2-digit', minute:'2-digit'});
 
-        signalText.textContent = `🎯 Colocar em ${timeStr} | Coeficiente: ${coef}x`;
+        signalText.textContent = `🎯 حط في ${timeStr} | المعامل: ${coef}x`;
     }, 2000);
 }
 </script>
 
 </body>
 </html>
-
-
-
-
-
