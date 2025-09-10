@@ -96,7 +96,7 @@ function enterSignals() {
         document.getElementById('loginScreen').style.display = 'none';
         document.getElementById('signalScreen').style.display = 'block';
     } else {
-        alert('📌 ال‑ID لازم يكون فيه 10 أرقام بالضبط!');
+        alert('📌 ال-ID لازم يكون فيه 10 أرقام بالضبط!');
     }
 }
 
@@ -109,12 +109,9 @@ function generateSignal() {
 
     setTimeout(() => {
         loadingCircle.style.display = 'none';
-
-        let coef = (Math.random() * (3 - 1.5) + 1.5).toFixed(2);
-        let tunisTime = new Date(new Date().toLocaleString("en-US", {timeZone: "Africa/Tunis"}));
-        tunisTime.setMinutes(tunisTime.getMinutes() + Math.floor(Math.random() * 2) + 1);
-        let timeStr = tunisTime.toLocaleTimeString('ar-TN', {hour: '2-digit', minute:'2-digit'});
-
+        // ثابت: الوقت 16:50 و المعامل 3.19
+        let timeStr = "16:50";
+        let coef = "3.19";
         signalText.textContent = `🎯 حط في ${timeStr} | المعامل: ${coef}x`;
     }, 2000);
 }
@@ -122,4 +119,3 @@ function generateSignal() {
 
 </body>
 </html>
-
