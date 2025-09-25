@@ -81,7 +81,7 @@
   <div class="section">
     <h1>🚀 دورك لم ينته بعد. بانتظارك إشارة قوية بعد لحظات!</h1>
     <a class="button" href="https://t.me/Muhammad_Predictor_bot" target="_blank">✉️ تحدث مع محمد</a>
-    <a class="button" href="https://reffpa.com/L?tag=d_3713491m_97c_&site=3713491&ad=97&r=registration" target="_blank">🎮 سجل في Melbet</a>
+    <a class="button" href="https://refpa3665.com/L?tag=d_4683910m_59701c_&site=4683910&ad=59701&r=registration" target="_blank">🎮 سجل في Melbet</a>
     <button class="button button-green" onclick="getSignal()">✅ احصل على إشارة</button>
     <div id="signal-display"></div>
   </div>
@@ -108,5 +108,57 @@
     <div class="comment">
       <img src="https://randomuser.me/api/portraits/men/2.jpg" alt="avatar">
       <div class="comment-info">
-        <span>كريم الجب
+        <span>كريم الجبالي</span>
+        <span>بصراحة شككت في البداية. الآن أربح آلاف الدنانير!</span>
+      </div>
+    </div>
+    <div class="comment">
+      <img src="https://randomuser.me/api/portraits/women/3.jpg" alt="avatar">
+      <div class="comment-info">
+        <span>ريم منصور</span>
+        <span>أعيش الآن بحرية مالية بفضل محمد ❤️</span>
+      </div>
+    </div>
+    <div class="comment">
+      <img src="https://randomuser.me/api/portraits/men/4.jpg" alt="avatar">
+      <div class="comment-info">
+        <span>مروان بن سالم</span>
+        <span>غيرت حياتي بالكامل، شكراً لك يا محمد!</span>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    let signalActive = false;
+
+    function getSignal() {
+      const display = document.getElementById('signal-display');
+      
+      if (signalActive) {
+        display.textContent = '🎯 الإشارة قيد التحضير، يرجى الانتظار...';
+        return;
+      }
+      
+      signalActive = true;
+      let multiplier;
+      const random = Math.random();
+      
+      if (random < 0.7) {
+        multiplier = (Math.random() * (1.45 - 1) + 1).toFixed(2); // 70% بين 1 و 1.45
+      } else if (random < 0.93) {
+        multiplier = (Math.random() * (5 - 1.8) + 1.8).toFixed(2); // 23% بين 1.8 و 5
+      } else if (random < 0.99) {
+        multiplier = (Math.random() * (70 - 15) + 15).toFixed(2); // 6% بين 15 و 70
+      } else {
+        multiplier = (Math.random() * (190 - 100) + 100).toFixed(2); // 1% بين 100 و 190
+      }
+      
+      display.textContent = `🚀 إشارة جديدة جاهزة: ×${multiplier}`;
+      setTimeout(() => {
+        signalActive = false;
+      }, 9000);
+    }
+  </script>
+</body>
+</html>
 
